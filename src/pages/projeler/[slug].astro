@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { mockProjects } from '../../lib/mockProjects.js';
+
+export function getStaticPaths() {
+	return mockProjects.map((p) => ({
+		params: { slug: p.slug },
+		props: { project: p },
+	}));
+}
+
+const { project } = Astro.props;
+---
+<BaseLayout title={project.title}>
+	<h1>{project.title}</h1>
+	<p><a href={`/${project.category}/`}>← Projeler listesine dön</a></p>
+</BaseLayout>

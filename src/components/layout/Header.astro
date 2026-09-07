@@ -1,0 +1,384 @@
+---
+import { mockCategories } from '../../lib/mockCategories.js';
+
+const categories = [...mockCategories].sort((a, b) => a.order - b.order);
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href) => path === (href.replace(/\/$/, '') || '/');
+---
+
+<header class="header" data-header>
+	<div class="bar">
+		<a class="brand" href="/">Şirket Adı</a>
+
+		<button
+			class="toggle"
+			type="button"
+			aria-expanded="false"
+			aria-controls="site-nav"
+			aria-label="Menü"
+			data-menu-toggle
+		>
+			<span class="toggle-box"><span class="toggle-line"></span></span>
+		</button>
+
+		<nav class="nav" id="site-nav" aria-label="Ana menü">
+			<ul class="nav-list">
+				<li>
+					<a class="nav-link" href="/" aria-current={isActive('/') ? 'page' : undefined}>Ana Sayfa</a>
+				</li>
+				<li>
+					<a
+						class="nav-link"
+						href="/hakkimizda"
+						aria-current={isActive('/hakkimizda') ? 'page' : undefined}>Hakkımızda</a
+					>
+				</li>
+				<li class="group" data-dropdown>
+					<button
+						class="nav-link trigger"
+						type="button"
+						aria-expanded="false"
+						aria-controls="is-kollarimiz"
+						data-dropdown-trigger
+					>
+						İş Kollarımız
+						<svg class="chevron" viewBox="0 0 12 8" aria-hidden="true"
+							><path d="M1 1.5 6 6.5l5-5" fill="none" stroke="currentColor" stroke-width="1.6" /></svg
+						>
+					</button>
+					<ul class="submenu" id="is-kollarimiz">
+						{
+							categories.map((category) => (
+								<li>
+									<a
+										class="submenu-link"
+										href={`/${category.slug}/`}
+										aria-current={isActive(`/${category.slug}/`) ? 'page' : undefined}
+									>
+										{category.title}
+									</a>
+								</li>
+							))
+						}
+					</ul>
+				</li>
+				<li>
+					<a
+						class="nav-link"
+						href="/iletisim"
+						aria-current={isActive('/iletisim') ? 'page' : undefined}>İletişim</a
+					>
+				</li>
+			</ul>
+		</nav>
+	</div>
+</header>
+
+<style>
+	.header {
+		position: sticky;
+		top: 0;
+		z-index: 50;
+		background: var(--color-surface);
+		border-bottom: var(--border-hairline);
+	}
+
+	.bar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-4);
+		max-width: var(--container);
+		min-height: var(--header-height);
+		margin-inline: auto;
+		padding-inline: var(--container-pad);
+	}
+
+	.brand {
+		font-family: var(--font-display);
+		font-size: var(--text-lg);
+		font-weight: var(--weight-bold);
+		letter-spacing: var(--tracking-wide);
+		text-transform: uppercase;
+		color: var(--color-ink);
+		text-decoration: none;
+	}
+
+	.toggle {
+		display: grid;
+		place-items: center;
+		width: 2.75rem;
+		height: 2.75rem;
+		margin-right: calc(var(--space-3) * -1);
+		background: none;
+		border: 0;
+		color: var(--color-ink);
+		cursor: pointer;
+	}
+
+	.toggle-box {
+		position: relative;
+		display: block;
+		width: 22px;
+		height: 14px;
+	}
+
+	.toggle-line,
+	.toggle-line::before,
+	.toggle-line::after {
+		position: absolute;
+		left: 0;
+		width: 100%;
+		height: 2px;
+		background: currentColor;
+		transition: transform var(--transition), opacity var(--transition);
+	}
+
+	.toggle-line {
+		top: 6px;
+	}
+
+	.toggle-line::before,
+	.toggle-line::after {
+		content: '';
+	}
+
+	.toggle-line::before {
+		top: -6px;
+	}
+
+	.toggle-line::after {
+		top: 6px;
+	}
+
+	.header.nav-open .toggle-line {
+		background: transparent;
+	}
+
+	.header.nav-open .toggle-line::before {
+		transform: translateY(6px) rotate(45deg);
+	}
+
+	.header.nav-open .toggle-line::after {
+		transform: translateY(-6px) rotate(-45deg);
+	}
+
+	.nav {
+		display: none;
+		position: absolute;
+		inset-inline: 0;
+		top: 100%;
+		background: var(--color-surface);
+		border-bottom: var(--border-hairline);
+		box-shadow: var(--shadow-raised);
+	}
+
+	.header.nav-open .nav {
+		display: block;
+	}
+
+	.nav-list {
+		list-style: none;
+		margin: 0;
+		padding: var(--space-2) var(--container-pad) var(--space-5);
+	}
+
+	.nav-link {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
+		width: 100%;
+		padding: var(--space-3) 0;
+		font-family: var(--font-display);
+		font-size: var(--text-base);
+		font-weight: var(--weight-medium);
+		color: var(--color-graphite);
+		text-decoration: none;
+		background: none;
+		border: 0;
+		border-bottom: var(--border-hairline);
+		text-align: left;
+		cursor: pointer;
+	}
+
+	.nav-link[aria-current='page'] {
+		color: var(--color-accent-strong);
+	}
+
+	.chevron {
+		width: 12px;
+		flex: none;
+		transition: transform var(--transition);
+	}
+
+	[data-dropdown].is-open .chevron {
+		transform: rotate(180deg);
+	}
+
+	.submenu {
+		display: none;
+		list-style: none;
+		margin: 0;
+		padding: var(--space-2) 0 var(--space-3) var(--space-4);
+		border-bottom: var(--border-hairline);
+		border-left: 2px solid var(--color-accent);
+	}
+
+	[data-dropdown].is-open .submenu {
+		display: block;
+	}
+
+	.submenu-link {
+		display: block;
+		padding: var(--space-2) 0;
+		font-size: var(--text-sm);
+		color: var(--color-steel);
+		text-decoration: none;
+	}
+
+	.submenu-link:hover,
+	.submenu-link[aria-current='page'] {
+		color: var(--color-accent-strong);
+	}
+
+	@media (min-width: 900px) {
+		.toggle {
+			display: none;
+		}
+
+		.nav,
+		.header.nav-open .nav {
+			display: block;
+			position: static;
+			border: 0;
+			box-shadow: none;
+			background: none;
+		}
+
+		.nav-list {
+			display: flex;
+			align-items: center;
+			gap: var(--space-5);
+			padding: 0;
+		}
+
+		.group {
+			position: relative;
+		}
+
+		.nav-link {
+			width: auto;
+			padding: var(--space-2) 0;
+			font-size: var(--text-sm);
+			letter-spacing: var(--tracking-wide);
+			text-transform: uppercase;
+			border-bottom: 2px solid transparent;
+		}
+
+		.nav-link:hover,
+		.nav-link[aria-current='page'] {
+			color: var(--color-ink);
+			border-bottom-color: var(--color-accent);
+		}
+
+		.submenu,
+		[data-dropdown].is-open .submenu {
+			display: block;
+			position: absolute;
+			top: calc(100% + var(--space-2));
+			left: calc(var(--space-4) * -1);
+			min-width: 14rem;
+			padding: var(--space-2) 0;
+			background: var(--color-surface);
+			border: var(--border-hairline);
+			border-left: 2px solid var(--color-accent);
+			border-radius: var(--radius-sm);
+			box-shadow: var(--shadow-raised);
+			opacity: 0;
+			visibility: hidden;
+			transform: translateY(-4px);
+			transition: opacity var(--transition), transform var(--transition), visibility var(--transition);
+		}
+
+		[data-dropdown].is-open .submenu {
+			opacity: 1;
+			visibility: visible;
+			transform: none;
+		}
+
+		/* Trigger ile menü arasındaki boşlukta pointerleave tetiklenmesin */
+		.submenu::before {
+			content: '';
+			position: absolute;
+			inset-inline: 0;
+			top: calc(var(--space-2) * -1);
+			height: var(--space-2);
+		}
+
+		.submenu-link {
+			padding: var(--space-2) var(--space-4);
+			font-size: var(--text-sm);
+		}
+
+		.submenu-link:hover {
+			background: var(--color-surface-alt);
+		}
+	}
+</style>
+
+<script>
+	const header = document.querySelector('[data-header]');
+	const toggle = header.querySelector('[data-menu-toggle]');
+	const dropdown = header.querySelector('[data-dropdown]');
+	const trigger = dropdown.querySelector('[data-dropdown-trigger]');
+	const hoverable = window.matchMedia('(min-width: 900px) and (hover: hover)');
+
+	const setDropdown = (open) => {
+		dropdown.classList.toggle('is-open', open);
+		trigger.setAttribute('aria-expanded', String(open));
+	};
+
+	const setNav = (open) => {
+		header.classList.toggle('nav-open', open);
+		toggle.setAttribute('aria-expanded', String(open));
+		if (!open) setDropdown(false);
+	};
+
+	toggle.addEventListener('click', () => {
+		setNav(!header.classList.contains('nav-open'));
+	});
+
+	trigger.addEventListener('click', () => {
+		setDropdown(!dropdown.classList.contains('is-open'));
+	});
+
+	dropdown.addEventListener('pointerenter', () => {
+		if (hoverable.matches) setDropdown(true);
+	});
+
+	dropdown.addEventListener('pointerleave', () => {
+		if (hoverable.matches) setDropdown(false);
+	});
+
+	dropdown.addEventListener('focusout', (event) => {
+		if (hoverable.matches && !dropdown.contains(event.relatedTarget)) setDropdown(false);
+	});
+
+	document.addEventListener('click', (event) => {
+		if (!header.contains(event.target)) {
+			setDropdown(false);
+			setNav(false);
+		}
+	});
+
+	document.addEventListener('keydown', (event) => {
+		if (event.key !== 'Escape') return;
+		setDropdown(false);
+		setNav(false);
+	});
+
+	hoverable.addEventListener('change', () => {
+		setDropdown(false);
+		setNav(false);
+	});
+</script>

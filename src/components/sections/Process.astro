@@ -1,0 +1,95 @@
+---
+const steps = [
+	{
+		title: 'Keşif',
+		description: 'Saha ziyareti ve ihtiyaç analiziyle projeyi netleştiriyoruz.',
+	},
+	{
+		title: 'Planlama',
+		description: 'Kapsamı, takvimi ve teknik gereksinimleri birlikte belirliyoruz.',
+	},
+	{
+		title: 'Uygulama',
+		description: 'Sahada uzman ekibimizle işi güvenle ve zamanında yürütüyoruz.',
+	},
+	{
+		title: 'Teslim',
+		description: 'Tamamlanan işi kontrol ederek eksiksiz teslim ediyoruz.',
+	},
+	{
+		title: 'Destek',
+		description: 'Teslim sonrasında da bakım ve destekle yanınızda oluyoruz.',
+	},
+];
+---
+
+<section class="process">
+	<div class="inner">
+		<h2>Çalışma Sürecimiz</h2>
+
+		<ol class="steps">
+			{
+				steps.map((step, index) => (
+					<li class="step">
+						<span class="index">{String(index + 1).padStart(2, '0')}</span>
+						<h3>{step.title}</h3>
+						<p>{step.description}</p>
+					</li>
+				))
+			}
+		</ol>
+	</div>
+</section>
+
+<style>
+	.process {
+		background: var(--color-surface-alt);
+	}
+
+	.inner {
+		max-width: var(--container);
+		margin-inline: auto;
+		padding: var(--space-7) var(--container-pad);
+	}
+
+	.steps {
+		display: grid;
+		gap: var(--space-6);
+		margin: var(--space-6) 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.step {
+		padding-top: var(--space-4);
+		border-top: var(--border-hairline);
+	}
+
+	.index {
+		display: block;
+		margin-bottom: var(--space-2);
+		font-size: var(--text-sm);
+		font-weight: var(--weight-bold);
+		letter-spacing: var(--tracking-wide);
+		color: var(--color-accent-strong);
+	}
+
+	.step h3 {
+		margin: 0 0 var(--space-2);
+		font-size: var(--text-lg);
+		color: var(--color-ink);
+	}
+
+	.step p {
+		margin: 0;
+		font-size: var(--text-sm);
+		color: var(--color-steel);
+	}
+
+	@media (min-width: 900px) {
+		.steps {
+			grid-template-columns: repeat(5, 1fr);
+			gap: var(--space-5);
+		}
+	}
+</style>

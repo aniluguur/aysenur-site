@@ -1,0 +1,102 @@
+---
+import { mockProjects } from '../../lib/mockProjects.js';
+import { mockCategories } from '../../lib/mockCategories.js';
+import ProjectCard from '../projects/ProjectCard.astro';
+
+const categoryTitle = (slug) => mockCategories.find((category) => category.slug === slug)?.title ?? '';
+const projects = mockProjects.slice(0, 4);
+---
+
+<section class="featured-projects">
+	<div class="inner">
+		<p class="eyebrow">Sahada güvenilir, teslimde zamanında</p>
+		<h2>Öne Çıkan Projeler</h2>
+		<p class="lead">
+			Tamamladığımız işler, planlamadan teslime kadar sürdürdüğümüz aynı titizliğin bir kanıtı.
+		</p>
+		<div class="carousel" id="featured-carousel">
+			{
+				projects.map((project) => (
+					<div class="carousel-item">
+						<ProjectCard project={project} categoryTitle={categoryTitle(project.category)} />
+					</div>
+				))
+			}
+		</div>
+		<div class="progress-track">
+			<div class="progress-fill" id="featured-progress"></div>
+		</div>
+	</div>
+</section>
+
+<script>
+	const carousel = document.getElementById('featured-carousel');
+	const fill = document.getElementById('featured-progress');
+
+	if (carousel && fill) {
+		const updateProgress = () => {
+			const max = carousel.scrollWidth - carousel.clientWidth;
+			const ratio = max > 0 ? carousel.scrollLeft / max : 0;
+			fill.style.width = `${ratio * 100}%`;
+		};
+
+		carousel.addEventListener('scroll', updateProgress, { passive: true });
+		updateProgress();
+	}
+</script>
+
+<style>
+	.featured-projects {
+		background: var(--color-surface-alt);
+	}
+
+	.inner {
+		max-width: var(--container);
+		margin-inline: auto;
+		padding: var(--space-7) var(--container-pad);
+	}
+
+	.eyebrow {
+		margin: 0 0 var(--space-2);
+		font-size: var(--text-sm);
+		font-weight: var(--weight-bold);
+		letter-spacing: var(--tracking-wide);
+		text-transform: uppercase;
+		color: var(--color-accent-strong);
+	}
+
+	.lead {
+		max-width: 60ch;
+		color: var(--color-steel);
+	}
+
+	.carousel {
+		display: flex;
+		gap: var(--space-5);
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		margin-top: var(--space-6);
+		scrollbar-width: none;
+	}
+
+	.carousel::-webkit-scrollbar {
+		display: none;
+	}
+
+	.carousel-item {
+		flex: 0 0 clamp(240px, 30vw, 300px);
+		scroll-snap-align: start;
+	}
+
+	.progress-track {
+		height: 2px;
+		margin-top: var(--space-4);
+		background: var(--color-line);
+	}
+
+	.progress-fill {
+		height: 100%;
+		width: 0%;
+		background: var(--color-accent);
+	}
+</style>

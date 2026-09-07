@@ -1,0 +1,113 @@
+<section class="about-preview">
+	<div class="inner">
+		<div class="content">
+			<h2>Hakkımızda</h2>
+			<p>
+				Mekanik ve tarım sektöründe edindiğimiz saha deneyimiyle projeleri baştan sona güvenle
+				teslim ediyoruz. Ekibimiz, planlamadan uygulamaya kadar her aşamada yanınızda.
+			</p>
+			<a class="link" href="/hakkimizda">Devamını Oku →</a>
+		</div>
+	</div>
+
+	<div class="collage" aria-hidden="true">
+		<div class="collage-main"></div>
+		<div class="collage-secondary"></div>
+		<div class="collage-ring"></div>
+	</div>
+</section>
+
+<style>
+	.about-preview {
+		background: var(--color-surface-alt);
+		padding-bottom: var(--space-7);
+	}
+
+	.inner {
+		max-width: var(--container);
+		margin-inline: auto;
+		padding: var(--space-7) var(--container-pad) 0;
+	}
+
+	.content p {
+		max-width: 60ch;
+	}
+
+	.link {
+		display: inline-block;
+		font-size: var(--text-sm);
+		font-weight: var(--weight-medium);
+		color: var(--color-accent-strong);
+		text-decoration: none;
+	}
+
+	.link:hover {
+		text-decoration: underline;
+	}
+
+	.collage {
+		position: relative;
+		width: 100%;
+		min-height: 40vh;
+		margin-top: var(--space-6);
+	}
+
+	.collage-main {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 72%;
+		height: 78%;
+		border-radius: var(--radius-md);
+		background: linear-gradient(135deg, var(--color-field), var(--color-steel));
+	}
+
+	.collage-secondary {
+		position: absolute;
+		right: 4%;
+		bottom: 0;
+		width: 38%;
+		height: 52%;
+		border-radius: var(--radius-md);
+		background: linear-gradient(315deg, var(--color-harvest), var(--color-accent));
+		box-shadow: var(--shadow-raised);
+	}
+
+	/* Kesişim noktasında dekoratif halka */
+	.collage-ring {
+		position: absolute;
+		left: 60%;
+		top: 60%;
+		width: 2.5rem;
+		height: 2.5rem;
+		border: 2px solid var(--color-accent);
+		border-radius: 50%;
+		background: transparent;
+	}
+
+	@media (min-width: 900px) {
+		.collage {
+			min-height: 60vh;
+			margin-top: var(--space-8);
+		}
+
+		.collage-main {
+			width: 66%;
+			height: 82%;
+		}
+
+		.collage-secondary {
+			right: 6%;
+			bottom: -4%;
+			width: 34%;
+			height: 56%;
+		}
+
+		.collage-ring {
+			left: 58%;
+			top: 55%;
+			width: 5.5rem;
+			height: 5.5rem;
+		}
+	}
+</style>

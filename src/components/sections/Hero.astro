@@ -1,0 +1,69 @@
+<section class="hero">
+	<div class="inner">
+		<p class="eyebrow">Mekanik ve Tarım Çözümleri</p>
+		<h1>Sahada güvenilir, projede kalıcı çözümler üretiyoruz.</h1>
+		<p class="lead">
+			Mekanik tesisat ve tarımsal altyapı projelerini anahtar teslim planlıyor, uyguluyor ve teslim
+			sonrasında da destekliyoruz.
+		</p>
+		<a class="cta" href="/iletisim">İletişime Geçin</a>
+	</div>
+</section>
+
+<style>
+	.hero {
+		background: var(--color-ink);
+		color: var(--color-on-dark);
+	}
+
+	.inner {
+		max-width: var(--container);
+		margin-inline: auto;
+		padding: var(--space-8) var(--container-pad);
+	}
+
+	.eyebrow {
+		margin: 0 0 var(--space-3);
+		font-size: var(--text-sm);
+		font-weight: var(--weight-bold);
+		letter-spacing: var(--tracking-wide);
+		text-transform: uppercase;
+		color: var(--color-harvest);
+	}
+
+	h1 {
+		max-width: 18ch;
+		color: var(--color-on-dark);
+	}
+
+	.lead {
+		max-width: 48ch;
+		font-size: var(--text-lg);
+		color: var(--color-steel-light);
+	}
+
+	.cta {
+		display: inline-block;
+		margin-top: var(--space-2);
+		padding: var(--space-3) var(--space-6);
+		background: var(--color-accent);
+		color: var(--color-on-accent);
+		font-weight: var(--weight-medium);
+		font-size: var(--text-sm);
+		letter-spacing: var(--tracking-wide);
+		text-transform: uppercase;
+		text-decoration: none;
+		border-radius: var(--radius-sm);
+		transition: background var(--transition);
+	}
+
+	.cta:hover {
+		background: var(--color-accent-strong);
+	}
+
+	@media (min-width: 900px) {
+		.inner {
+			padding-block: var(--space-9);
+		}
+	}
+</style>

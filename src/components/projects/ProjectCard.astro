@@ -1,0 +1,93 @@
+---
+const { project, categoryTitle } = Astro.props;
+
+const TURKISH_MONTHS = [
+	'Ocak',
+	'Şubat',
+	'Mart',
+	'Nisan',
+	'Mayıs',
+	'Haziran',
+	'Temmuz',
+	'Ağustos',
+	'Eylül',
+	'Ekim',
+	'Kasım',
+	'Aralık',
+];
+
+const [year, month] = project.projectDate.split('-');
+const formattedDate = `${TURKISH_MONTHS[Number(month) - 1]} ${year}`;
+const meta = [project.location, formattedDate].filter(Boolean).join(' · ');
+---
+
+<a class="project-card" href={`/projeler/${project.slug}`}>
+	<div class="cover" aria-hidden="true"></div>
+	<div class="body">
+		<p class="category">{categoryTitle}</p>
+		<h3>{project.title}</h3>
+		<p class="meta">{meta}</p>
+		<span class="cta">Detayları Gör</span>
+	</div>
+</a>
+
+<style>
+	.project-card {
+		display: flex;
+		flex-direction: column;
+		background: var(--color-surface);
+		text-decoration: none;
+		transition: transform var(--transition);
+	}
+
+	.project-card:hover {
+		transform: translateY(-2px);
+	}
+
+	.cover {
+		aspect-ratio: 9 / 8;
+		background: linear-gradient(135deg, var(--color-field), var(--color-steel));
+	}
+
+	.body {
+		padding: var(--space-4) var(--space-5) var(--space-5);
+	}
+
+	.category {
+		margin: 0 0 var(--space-2);
+		font-size: var(--text-xs);
+		font-weight: var(--weight-bold);
+		letter-spacing: var(--tracking-wide);
+		text-transform: uppercase;
+		color: var(--color-accent-strong);
+	}
+
+	.body h3 {
+		margin: 0 0 var(--space-2);
+		font-size: var(--text-xl);
+	}
+
+	.meta {
+		margin: 0 0 var(--space-4);
+		font-size: var(--text-sm);
+		color: var(--color-steel);
+	}
+
+	.cta {
+		display: inline-block;
+		padding: var(--space-2) var(--space-5);
+		border: 1px solid var(--color-accent);
+		color: var(--color-accent-strong);
+		font-weight: var(--weight-medium);
+		font-size: var(--text-sm);
+		letter-spacing: var(--tracking-wide);
+		text-transform: uppercase;
+		border-radius: var(--radius-sm);
+		transition: background var(--transition), color var(--transition);
+	}
+
+	.project-card:hover .cta {
+		background: var(--color-accent);
+		color: var(--color-on-accent);
+	}
+</style>
