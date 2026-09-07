@@ -6,3 +6,9 @@ dist/
 !.env.example
 .DS_Store
 npm-debug.log*
+
+# Yapay zeka araç/ajan yapılandırması — repoya değil, sadece yerelde kalır
+.claude/
+.codex/
+CLAUDE.md
+AGENTS.md
