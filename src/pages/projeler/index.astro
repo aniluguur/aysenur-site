@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/projects/ProjectCard.astro';
+import { mockProjects } from '../../lib/mockProjects.js';
+import { mockCategories } from '../../lib/mockCategories.js';
+
+const categoryTitle = (slug) => mockCategories.find((category) => category.slug === slug)?.title ?? '';
+---
+<BaseLayout title="Projelerimiz">
+	<section class="projects">
+		<div class="inner">
+			<p class="eyebrow">Sahada Tamamladıklarımız</p>
+			<h1>Projelerimiz</h1>
+			<p class="lead">Tüm iş kollarımızda tamamladığımız projelerin genel listesi.</p>
+			<div class="grid">
+				{
+					mockProjects.map((project) => (
+						<ProjectCard project={project} categoryTitle={categoryTitle(project.category)} />
+					))
+				}
+			</div>
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.projects {
+		background: var(--color-surface-alt);
+	}
+
+	.inner {
+		max-width: var(--container);
+		margin-inline: auto;
+		padding: var(--space-7) var(--container-pad);
+	}
+
+	.eyebrow {
+		margin: 0 0 var(--space-2);
+		font-size: var(--text-sm);
+		font-weight: var(--weight-bold);
+		letter-spacing: var(--tracking-wide);
+		text-transform: uppercase;
+		color: var(--color-accent-strong);
+	}
+
+	.lead {
+		max-width: 60ch;
+		color: var(--color-steel);
+	}
+
+	.grid {
+		display: grid;
+		gap: var(--space-5);
+		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+		margin-top: var(--space-6);
+	}
+</style>

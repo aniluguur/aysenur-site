@@ -30,7 +30,14 @@ const isActive = (href) => path === (href.replace(/\/$/, '') || '/');
 					<a
 						class="nav-link"
 						href="/hakkimizda"
-						aria-current={isActive('/hakkimizda') ? 'page' : undefined}>Hakkımızda</a
+						aria-current={isActive('/hakkimizda') ? 'page' : undefined}>Biz Kimiz</a
+					>
+				</li>
+				<li>
+					<a
+						class="nav-link"
+						href="/ne-yapiyoruz"
+						aria-current={isActive('/ne-yapiyoruz') ? 'page' : undefined}>Ne Yapıyoruz</a
 					>
 				</li>
 				<li class="group" data-dropdown>
@@ -41,7 +48,7 @@ const isActive = (href) => path === (href.replace(/\/$/, '') || '/');
 						aria-controls="is-kollarimiz"
 						data-dropdown-trigger
 					>
-						İş Kollarımız
+						Hizmet Verdiğimiz Sektörler
 						<svg class="chevron" viewBox="0 0 12 8" aria-hidden="true"
 							><path d="M1 1.5 6 6.5l5-5" fill="none" stroke="currentColor" stroke-width="1.6" /></svg
 						>
@@ -65,6 +72,13 @@ const isActive = (href) => path === (href.replace(/\/$/, '') || '/');
 				<li>
 					<a
 						class="nav-link"
+						href="/projeler"
+						aria-current={isActive('/projeler') ? 'page' : undefined}>Projeler</a
+					>
+				</li>
+				<li>
+					<a
+						class="nav-link nav-cta"
 						href="/iletisim"
 						aria-current={isActive('/iletisim') ? 'page' : undefined}>İletişim</a
 					>
@@ -205,6 +219,24 @@ const isActive = (href) => path === (href.replace(/\/$/, '') || '/');
 		color: var(--color-accent-strong);
 	}
 
+	.nav-cta {
+		justify-content: center;
+		margin-top: var(--space-2);
+		padding: var(--space-3) var(--space-6);
+		background: var(--color-accent);
+		color: var(--color-on-accent);
+		text-align: center;
+		border-bottom: 0;
+		border-radius: var(--radius-sm);
+		transition: background var(--transition);
+	}
+
+	.nav-cta:hover,
+	.nav-cta[aria-current='page'] {
+		color: var(--color-on-accent);
+		background: var(--color-accent-strong);
+	}
+
 	.chevron {
 		width: 12px;
 		flex: none;
@@ -279,6 +311,18 @@ const isActive = (href) => path === (href.replace(/\/$/, '') || '/');
 		.nav-link[aria-current='page'] {
 			color: var(--color-ink);
 			border-bottom-color: var(--color-accent);
+		}
+
+		.nav-cta {
+			margin-top: 0;
+			padding: var(--space-2) var(--space-5);
+			border-bottom: 0;
+		}
+
+		.nav-cta:hover,
+		.nav-cta[aria-current='page'] {
+			color: var(--color-on-accent);
+			border-bottom: 0;
 		}
 
 		.submenu,

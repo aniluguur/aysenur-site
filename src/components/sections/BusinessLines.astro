@@ -32,9 +32,10 @@ const categories = [...mockCategories].sort((a, b) => a.order - b.order);
 				{
 					categories.map((category, index) => (
 						<article
-							class:list={['panel', { 'is-active': index === 0 }]}
+							class="panel"
 							id={`business-line-${category.slug}`}
 							data-slug={category.slug}
+							hidden={index === 0 ? undefined : true}
 						>
 							<div class="copy">
 								<p class="eyebrow">İş Kolu</p>
@@ -120,28 +121,14 @@ const categories = [...mockCategories].sort((a, b) => a.order - b.order);
 		border-bottom-color: var(--color-accent);
 	}
 
-	.panels {
-		display: grid;
-	}
-
-	/* Paneller aynı grid hücresinde üst üste: yükseklik sabit kalır, geçişte zıplama olmaz */
 	.panel {
-		grid-area: 1 / 1;
 		display: grid;
 		gap: var(--space-5);
-		opacity: 0;
-		visibility: hidden;
-		transform: translateY(8px);
-		transition:
-			opacity var(--transition),
-			transform var(--transition),
-			visibility var(--transition);
 	}
 
-	.panel.is-active {
-		opacity: 1;
-		visibility: visible;
-		transform: none;
+	/* .panel'in kendi display:grid'i, [hidden]'ın varsayılan display:none'ını ezer — açıkça geri kazandırıyoruz */
+	.panel[hidden] {
+		display: none;
 	}
 
 	.eyebrow {
@@ -243,21 +230,21 @@ const categories = [...mockCategories].sort((a, b) => a.order - b.order);
 		const items = section.querySelectorAll('.item');
 		const panels = section.querySelectorAll('.panel');
 
-		items.forEach((item) => {
-			item.addEventListener('click', () => {
-				const slug = item.dataset.target;
-
-				items.forEach((other) => {
-					const active = other === item;
-					other.classList.toggle('is-active', active);
-					if (active) other.setAttribute('aria-current', 'true');
-					else other.removeAttribute('aria-current');
-				});
-
-				panels.forEach((panel) => {
-					panel.classList.toggle('is-active', panel.dataset.slug === slug);
-				});
+		const setActive = (index) => {
+			items.forEach((item, i) => {
+				const active = i === index;
+				item.classList.toggle('is-active', active);
+				if (active) item.setAttribute('aria-current', 'true');
+				else item.removeAttribute('aria-current');
 			});
+
+			panels.forEach((panel, i) => {
+				panel.hidden = i !== index;
+			});
+		};
+
+		items.forEach((item, index) => {
+			item.addEventListener('click', () => setActive(index));
 		});
 	}
 </script>

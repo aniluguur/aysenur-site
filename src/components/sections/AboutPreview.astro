@@ -1,6 +1,6 @@
 <section class="about-preview">
-	<div class="inner">
-		<div class="content">
+	<div class="row">
+		<div class="text">
 			<h2>Hakkımızda</h2>
 			<p>
 				Mekanik ve tarım sektöründe edindiğimiz saha deneyimiyle projeleri baştan sona güvenle
@@ -8,28 +8,49 @@
 			</p>
 			<a class="link" href="/hakkimizda">Devamını Oku →</a>
 		</div>
-	</div>
 
-	<div class="collage" aria-hidden="true">
-		<div class="collage-main"></div>
-		<div class="collage-secondary"></div>
-		<div class="collage-ring"></div>
+		<div class="gallery" aria-hidden="true">
+			<div class="carousel" id="about-carousel">
+				<div class="carousel-item item-main"></div>
+				<div class="stack">
+					<div class="carousel-item item-a"></div>
+					<div class="carousel-item item-b"></div>
+				</div>
+			</div>
+			<div class="progress-track">
+				<div class="progress-fill" id="about-progress"></div>
+			</div>
+		</div>
 	</div>
 </section>
+
+<script>
+	const carousel = document.getElementById('about-carousel');
+	const fill = document.getElementById('about-progress');
+
+	if (carousel && fill) {
+		const updateProgress = () => {
+			const max = carousel.scrollWidth - carousel.clientWidth;
+			const ratio = max > 0 ? carousel.scrollLeft / max : 0;
+			fill.style.width = `${ratio * 100}%`;
+		};
+
+		carousel.addEventListener('scroll', updateProgress, { passive: true });
+		updateProgress();
+	}
+</script>
 
 <style>
 	.about-preview {
 		background: var(--color-surface-alt);
-		padding-bottom: var(--space-7);
+		padding-block: var(--space-7);
 	}
 
-	.inner {
-		max-width: var(--container);
-		margin-inline: auto;
-		padding: var(--space-7) var(--container-pad) 0;
+	.text {
+		padding-inline: var(--container-pad);
 	}
 
-	.content p {
+	.text p {
 		max-width: 60ch;
 	}
 
@@ -45,69 +66,129 @@
 		text-decoration: underline;
 	}
 
-	.collage {
-		position: relative;
-		width: 100%;
-		min-height: 40vh;
+	.gallery {
 		margin-top: var(--space-6);
 	}
 
-	.collage-main {
-		position: absolute;
-		left: 0;
-		top: 0;
-		width: 72%;
-		height: 78%;
+	.carousel {
+		display: flex;
+		gap: var(--space-4);
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		scrollbar-width: none;
+		padding-inline: var(--container-pad);
+	}
+
+	.carousel::-webkit-scrollbar {
+		display: none;
+	}
+
+	.carousel-item {
+		flex: 0 0 78vw;
+		aspect-ratio: 4 / 3;
 		border-radius: var(--radius-md);
+		scroll-snap-align: start;
+	}
+
+	.item-main {
 		background: linear-gradient(135deg, var(--color-field), var(--color-steel));
 	}
 
-	.collage-secondary {
-		position: absolute;
-		right: 4%;
-		bottom: 0;
-		width: 38%;
-		height: 52%;
-		border-radius: var(--radius-md);
+	.item-a {
 		background: linear-gradient(315deg, var(--color-harvest), var(--color-accent));
-		box-shadow: var(--shadow-raised);
 	}
 
-	/* Kesişim noktasında dekoratif halka */
-	.collage-ring {
-		position: absolute;
-		left: 60%;
-		top: 60%;
-		width: 2.5rem;
-		height: 2.5rem;
-		border: 2px solid var(--color-accent);
-		border-radius: 50%;
-		background: transparent;
+	.item-b {
+		background: linear-gradient(45deg, var(--color-accent-strong), var(--color-field));
+	}
+
+	.progress-track {
+		height: 2px;
+		margin: var(--space-4) var(--container-pad) 0;
+		background: var(--color-line);
+	}
+
+	.progress-fill {
+		height: 100%;
+		width: 0%;
+		background: var(--color-accent);
+	}
+
+	/* mobilde .stack'in kendisi görünmez, item-a/item-b carousel'de item-main ile eşit sırada 3 ayrı slayt olur (referans sitedeki mobil swiper'ın 3 görsellik davranışıyla aynı) */
+	.stack {
+		display: contents;
 	}
 
 	@media (min-width: 900px) {
-		.collage {
-			min-height: 60vh;
-			margin-top: var(--space-8);
+		/* referans (mortenson.com/about, 1440px ölçüm): teaser tam ekran değil, container'lı — 400px görsel / 24px boşluk / 294px görsel sütunu / 130px boşluk / 400px metin */
+		.about-preview {
+			padding-block: var(--space-8);
 		}
 
-		.collage-main {
-			width: 66%;
-			height: 82%;
+		.row {
+			max-width: var(--container);
+			margin-inline: auto;
+			padding-inline: var(--container-pad);
+			display: grid;
+			grid-template-columns: 1.36fr 1fr 1.36fr;
+			column-gap: var(--space-5);
+			min-height: 80vh;
 		}
 
-		.collage-secondary {
-			right: 6%;
-			bottom: -4%;
-			width: 34%;
-			height: 56%;
+		.text {
+			grid-column: 3;
+			grid-row: 1;
+			align-self: center;
+			margin-left: var(--space-9);
+			padding-inline: 0;
 		}
 
-		.collage-ring {
-			left: 58%;
-			top: 55%;
-			width: 5.5rem;
-			height: 5.5rem;
+		.gallery {
+			display: contents;
+			margin-top: 0;
+		}
+
+		/* .carousel kendi kutusundan çıkıp öğelerini doğrudan .row'un grid'ine yerleştirir */
+		.carousel {
+			display: contents;
+			overflow: visible;
+			padding-inline: 0;
+		}
+
+		.carousel-item {
+			flex-basis: auto;
+			aspect-ratio: auto;
+		}
+
+		/* büyük görsel: satırın tamamını değil, referanstaki gibi kendi oranında bir yüksekliği alıp dikey ortalanıyor */
+		.item-main {
+			grid-column: 1;
+			grid-row: 1;
+			align-self: center;
+			width: 100%;
+			aspect-ratio: 400 / 539;
+		}
+
+		/* iç sütun artık gerçek bir flex konteyner: üstteki görsel alttakinin ~yarısı kadar (referans: 235px / 480px) */
+		.stack {
+			grid-column: 2;
+			grid-row: 1;
+			display: flex;
+			flex-direction: column;
+			gap: var(--space-3);
+			height: 100%;
+		}
+
+		.item-a {
+			flex: 1;
+		}
+
+		.item-b {
+			flex: 2;
+		}
+
+		.progress-track {
+			display: none;
 		}
 	}
 </style>
