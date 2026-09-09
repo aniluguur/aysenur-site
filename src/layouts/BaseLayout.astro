@@ -1,93 +1,59 @@
 ---
-import '../styles/tokens.css';
-import Header from '../components/layout/Header.astro';
-import Footer from '../components/layout/Footer.astro';
-
-const { title } = Astro.props;
+import "../styles/tokens.css";
+import "../styles/global.css";
+import Header from "../components/layout/Header.astro";
+import Footer from "../components/layout/Footer.astro";
+const {
+  title,
+  description = "Mekanik tesisat ve tarımsal altyapı projelerinde planlamadan uygulamaya, sahaya özel çözümler.",
+} = Astro.props;
 ---
 
+<!doctype html>
 <html lang="tr">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>{title}</title>
-	</head>
-	<body>
-		<Header />
-		<main>
-			<slot />
-		</main>
-		<Footer />
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#202922" />
+    <title>{title}</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      href="/fonts/manrope-regular.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">
+      İçeriğe geç
+    </a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
 </html>
-
-<style is:global>
-	*,
-	*::before,
-	*::after {
-		box-sizing: border-box;
-	}
-
-	html {
-		-webkit-text-size-adjust: 100%;
-	}
-
-	body {
-		display: flex;
-		flex-direction: column;
-		min-height: 100vh;
-		margin: 0;
-		background: var(--color-surface);
-		color: var(--color-graphite);
-		font-family: var(--font-sans);
-		font-size: var(--text-base);
-		line-height: var(--leading-normal);
-		-webkit-font-smoothing: antialiased;
-	}
-
-	main {
-		flex: 1;
-	}
-
-	h1,
-	h2,
-	h3 {
-		margin: 0 0 var(--space-4);
-		font-family: var(--font-display);
-		font-weight: var(--weight-bold);
-		line-height: var(--leading-tight);
-		letter-spacing: var(--tracking-tight);
-		color: var(--color-ink);
-	}
-
-	h1 {
-		font-size: var(--text-4xl);
-	}
-
-	h2 {
-		font-size: var(--text-3xl);
-	}
-
-	h3 {
-		font-size: var(--text-xl);
-	}
-
-	p {
-		margin: 0 0 var(--space-4);
-	}
-
-	a {
-		color: var(--color-accent-strong);
-	}
-
-	img {
-		display: block;
-		max-width: 100%;
-		height: auto;
-	}
-
-	:focus-visible {
-		outline: 2px solid var(--color-accent);
-		outline-offset: 2px;
-	}
-</style>
+<script>
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  if ("IntersectionObserver" in window && !reduced.matches) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.08 },
+    );
+    document.documentElement.classList.add("reveal-ready");
+    document
+      .querySelectorAll("[data-reveal]")
+      .forEach((el) => observer.observe(el));
+  }
+</script>

@@ -1,50 +1,131 @@
+---
+import Arrow from "../ui/Arrow.astro";
+---
+
 <section class="contact-cta">
-	<div class="inner">
-		<h2>Bize Ulaşın</h2>
-		<p>Projeniz için teklif almak veya sorularınızı iletmek üzere bizimle iletişime geçin.</p>
-		<a class="cta" href="/iletisim">İletişime Geç</a>
-	</div>
+  <div class="wrap cta-inner" data-reveal>
+    <div>
+      <p class="eyebrow">Bir sonraki adım</p>
+      <h2>
+        Bir fikriniz var.
+        <br />
+        <span>Birlikte hayata geçirelim.</span>
+      </h2>
+    </div>
+    <a
+      href="/iletisim"
+      class="cta-circle"
+      aria-label="Projeniz için bizimle iletişime geçin"
+    >
+      <Arrow />
+    </a>
+  </div>
+  <div class="wrap cta-bottom">
+    <p>Projenizi dinlemek için buradayız.</p>
+    <a href="/iletisim">İletişime geçin ↗</a>
+  </div>
 </section>
-
 <style>
-	.contact-cta {
-		background: var(--color-graphite);
-		color: var(--color-on-dark);
-		text-align: center;
-	}
-
-	.inner {
-		max-width: var(--container);
-		margin-inline: auto;
-		padding: var(--space-7) var(--container-pad);
-	}
-
-	h2 {
-		color: var(--color-on-dark);
-	}
-
-	.inner p {
-		max-width: 48ch;
-		margin-inline: auto;
-		color: var(--color-steel-light);
-	}
-
-	.cta {
-		display: inline-block;
-		margin-top: var(--space-3);
-		padding: var(--space-3) var(--space-6);
-		background: var(--color-accent);
-		color: var(--color-on-accent);
-		font-weight: var(--weight-medium);
-		font-size: var(--text-sm);
-		letter-spacing: var(--tracking-wide);
-		text-transform: uppercase;
-		text-decoration: none;
-		border-radius: var(--radius-sm);
-		transition: background var(--transition);
-	}
-
-	.cta:hover {
-		background: var(--color-accent-strong);
-	}
+  .contact-cta {
+    background: #d7ddc9;
+    padding-block: 75px 30px;
+  }
+  .cta-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 45px;
+  }
+  .contact-cta .eyebrow {
+    margin-bottom: 30px;
+  }
+  .contact-cta h2 {
+    font-size: clamp(37px, 5.3vw, 78px);
+    line-height: 1.15;
+  }
+  .contact-cta h2 span {
+    color: #58684f;
+  }
+  .cta-circle {
+    width: 112px;
+    height: 112px;
+    flex-shrink: 0;
+    border: 1px solid #20292255;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    transition:
+      background 0.4s,
+      color 0.4s,
+      transform 0.4s;
+  }
+  .cta-circle :global(svg) {
+    width: 38px;
+    height: 38px;
+  }
+  .cta-circle:hover {
+    background: var(--color-ink);
+    color: white;
+    transform: rotate(10deg);
+  }
+  .cta-bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding-top: 55px;
+    font-size: 10px;
+  }
+  .cta-bottom p {
+    color: #495440;
+  }
+  .cta-bottom a {
+    border-bottom: 1px solid currentColor;
+  }
+  @media (max-width: 700px) {
+    .contact-cta {
+      padding-top: 55px;
+    }
+    .cta-circle {
+      height: 65px;
+      width: 65px;
+    }
+    .cta-circle :global(svg) {
+      width: 26px;
+      height: 26px;
+    }
+    .cta-inner {
+      gap: 20px;
+    }
+    .contact-cta h2 {
+      font-size: 36px;
+    }
+    .cta-bottom {
+      font-size: 9px;
+    }
+  }
+  @media (max-width: 430px) {
+    .cta-inner {
+      align-items: end;
+    }
+    .contact-cta h2 {
+      font-size: 33px;
+    }
+    .cta-circle {
+      width: 48px;
+      height: 48px;
+      position: absolute;
+      right: var(--gutter);
+      bottom: -65px;
+    }
+    .cta-inner {
+      position: relative;
+    }
+    .cta-bottom > a {
+      visibility: hidden;
+    }
+    .cta-bottom {
+      padding-top: 35px;
+      padding-bottom: 15px;
+    }
+  }
 </style>

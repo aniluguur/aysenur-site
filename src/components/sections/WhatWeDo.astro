@@ -1,147 +1,124 @@
 ---
-const groups = [
-	{
-		title: 'Mekanik',
-		href: '/mekanik/',
-		items: [
-			'Mekanik Tesisat',
-			'Boru Hattı Montajı',
-			'Ekipman Montajı ve Devreye Alma',
-			'Bakım ve Revizyon',
-		],
-	},
-	{
-		title: 'Tarım',
-		href: '/tarim/',
-		items: [
-			'Sulama Sistemleri',
-			'Tarımsal Depolama Çözümleri',
-			'Traktör ve Makine Bakımı',
-			'Sera Altyapı Sistemleri',
-		],
-	},
-];
+import { getCategories } from "../../lib/queries";
+import { imageUrl, sectorImage } from "../../lib/media";
+import { services } from "../../lib/services";
+import Arrow from "../ui/Arrow.astro";
+const categories = await getCategories();
 ---
 
-<section class="what-we-do">
-	<div class="inner">
-		<p class="eyebrow">Ne Yapıyoruz</p>
-		<h2>Sahada ürettiğimiz somut çözümler.</h2>
-		<p class="lead">
-			İş kollarımızın altında, sahada karşılığı olan somut hizmetler sunuyoruz — keşiften teslime
-			kadar uçtan uca sorumluluk alıyoruz.
-		</p>
-
-		<div class="groups">
-			{
-				groups.map((group) => (
-					<div class="group">
-						<h3>{group.title}</h3>
-						<ul class="links">
-							{group.items.map((item) => (
-								<li>
-									<a href={group.href}>{item}</a>
-								</li>
-							))}
-						</ul>
-					</div>
-				))
-			}
-		</div>
-	</div>
+<section class="service-list">
+  <div class="wrap">
+    {categories.map((category, index) => (
+      <article class="service-row" data-reveal>
+        <div class="service-count">0{index + 1} / UZMANLIK</div>
+        <div class="service-copy">
+          <h2>{category.title}</h2>
+          <p>{category.description}</p>
+          <ul>
+            {(services[category.slug] || []).map((service) => (
+              <li>{service}</li>
+            ))}
+          </ul>
+          <a class="text-link" href={`/${category.slug}/`}>
+            Sektörü ve projeleri keşfedin <Arrow />
+          </a>
+        </div>
+        <figure class="photo service-photo">
+          <img
+            src={imageUrl(
+              category.coverImage,
+              1000,
+              sectorImage(category.slug),
+            )}
+            alt={category.coverImage?.alt || `${category.title} çalışma alanı`}
+            width="1000"
+            height="800"
+            loading="lazy"
+          />
+          {!category.coverImage?.asset && (
+            <span class="photo-credit">Temsili görsel</span>
+          )}
+        </figure>
+      </article>
+    ))}
+  </div>
 </section>
-
 <style>
-	.what-we-do {
-		background: var(--color-ink);
-		color: var(--color-on-dark);
-	}
-
-	.inner {
-		max-width: var(--container);
-		margin-inline: auto;
-		padding: var(--space-7) var(--container-pad);
-	}
-
-	.eyebrow {
-		margin: 0 0 var(--space-3);
-		font-size: var(--text-sm);
-		font-weight: var(--weight-bold);
-		letter-spacing: var(--tracking-wide);
-		text-transform: uppercase;
-		color: var(--color-harvest);
-	}
-
-	h2 {
-		max-width: 20ch;
-		margin: 0 0 var(--space-3);
-		color: var(--color-on-dark);
-	}
-
-	.lead {
-		max-width: 56ch;
-		margin: 0;
-		font-size: var(--text-lg);
-		color: var(--color-steel-light);
-	}
-
-	.groups {
-		display: grid;
-		gap: var(--space-6);
-		margin-top: var(--space-7);
-	}
-
-	.group h3 {
-		margin: 0 0 var(--space-3);
-		font-size: var(--text-sm);
-		font-weight: var(--weight-bold);
-		letter-spacing: var(--tracking-wide);
-		text-transform: uppercase;
-		color: var(--color-steel-light);
-	}
-
-	.links {
-		display: grid;
-		gap: var(--space-3);
-		margin: 0;
-		padding: 0;
-		list-style: none;
-	}
-
-	.links a {
-		display: inline-flex;
-		align-items: baseline;
-		gap: var(--space-2);
-		color: var(--color-on-dark);
-		font-size: var(--text-lg);
-		text-decoration: none;
-		border-bottom: 1px solid transparent;
-		transition: border-color var(--transition);
-	}
-
-	.links a::after {
-		content: '→';
-		color: var(--color-harvest);
-		opacity: 0;
-		transform: translateX(-4px);
-		transition:
-			opacity var(--transition),
-			transform var(--transition);
-	}
-
-	.links a:hover {
-		border-bottom-color: var(--color-steel-light);
-	}
-
-	.links a:hover::after {
-		opacity: 1;
-		transform: none;
-	}
-
-	@media (min-width: 900px) {
-		.groups {
-			grid-template-columns: repeat(2, 1fr);
-			gap: var(--space-7);
-		}
-	}
+  .service-list {
+    padding-bottom: var(--section-space);
+  }
+  .service-row {
+    display: grid;
+    grid-template-columns: 130px 1fr 1fr;
+    gap: 45px;
+    border-top: 1px solid var(--color-line);
+    padding-block: 55px 65px;
+  }
+  .service-count {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--color-accent);
+    padding-top: 12px;
+  }
+  .service-copy h2 {
+    font-size: 45px;
+  }
+  .service-copy > p {
+    font-size: 13px;
+    margin-top: 24px;
+    max-width: 380px;
+  }
+  .service-copy ul {
+    list-style: none;
+    padding: 0;
+    margin: 30px 0;
+  }
+  .service-copy li {
+    font-size: 12px;
+    border-bottom: 1px solid var(--color-line);
+    padding: 12px 0;
+    display: flex;
+    gap: 15px;
+  }
+  .service-copy li::before {
+    content: "↳";
+    color: var(--color-accent);
+  }
+  .service-copy .text-link {
+    font-size: 11px;
+  }
+  .service-photo {
+    height: 430px;
+    align-self: center;
+  }
+  @media (max-width: 1000px) {
+    .service-row {
+      grid-template-columns: 1fr 1fr;
+      gap: 24px 40px;
+    }
+    .service-count {
+      grid-column: 1/-1;
+    }
+  }
+  @media (max-width: 650px) {
+    .service-row {
+      grid-template-columns: 1fr;
+      padding-top: 30px;
+    }
+    .service-copy h2 {
+      font-size: 37px;
+    }
+    .service-photo {
+      height: 310px;
+      margin-top: 15px;
+    }
+  }
+  @media (max-width: 700px) {
+    .service-copy > p {
+      font-size: 14px;
+    }
+    .service-copy li {
+      font-size: 13px;
+    }
+  }
 </style>

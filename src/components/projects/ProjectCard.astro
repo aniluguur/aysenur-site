@@ -1,94 +1,135 @@
 ---
-const { project } = Astro.props;
-const categoryTitle = project.category?.title ?? '';
-
-const TURKISH_MONTHS = [
-	'Ocak',
-	'Şubat',
-	'Mart',
-	'Nisan',
-	'Mayıs',
-	'Haziran',
-	'Temmuz',
-	'Ağustos',
-	'Eylül',
-	'Ekim',
-	'Kasım',
-	'Aralık',
-];
-
-const [year, month] = project.projectDate.split('-');
-const formattedDate = `${TURKISH_MONTHS[Number(month) - 1]} ${year}`;
-const meta = [project.location, formattedDate].filter(Boolean).join(' · ');
+import Arrow from "../ui/Arrow.astro";
+import { imageUrl, projectImage, projectDate } from "../../lib/media";
+const { project, index = 0 } = Astro.props;
+const meta = [project.location, projectDate(project.projectDate)]
+  .filter(Boolean)
+  .join(" / ");
 ---
 
-<a class="project-card" href={`/projeler/${project.slug}`}>
-	<div class="cover" aria-hidden="true"></div>
-	<div class="body">
-		<p class="category">{categoryTitle}</p>
-		<h3>{project.title}</h3>
-		<p class="meta">{meta}</p>
-		<span class="cta">Detayları Gör</span>
-	</div>
+<a class="project-card" href={`/projeler/${project.slug}/`}>
+  <div class="photo project-photo">
+    <img
+      src={imageUrl(
+        project.coverImage,
+        1100,
+        projectImage(project.slug, project.category?.slug),
+      )}
+      alt={
+        project.coverImage?.alt ||
+        (project.coverImage?.asset
+          ? project.title
+          : `${project.category?.title || "Proje"} alanını temsil eden görsel`)
+      }
+      width="1100"
+      height="800"
+      loading="lazy"
+    />
+    <span class="project-open">
+      <Arrow />
+    </span>
+    {!project.coverImage?.asset && (
+      <span class="photo-credit">Temsili görsel</span>
+    )}
+  </div>
+  <div class="card-category">
+    <span>{project.category?.title || "Proje"}</span>
+    <span>{String(index + 1).padStart(2, "0")}</span>
+  </div>
+  <h3>{project.title}</h3>
+  <p class="card-meta">{meta}</p>
+  <span class="card-link">
+    Projeyi inceleyin <Arrow diagonal={false} />
+  </span>
 </a>
-
 <style>
-	.project-card {
-		display: flex;
-		flex-direction: column;
-		background: var(--color-surface);
-		text-decoration: none;
-		transition: transform var(--transition);
-	}
-
-	.project-card:hover {
-		transform: translateY(-2px);
-	}
-
-	.cover {
-		aspect-ratio: 9 / 8;
-		background: linear-gradient(135deg, var(--color-field), var(--color-steel));
-	}
-
-	.body {
-		padding: var(--space-4) var(--space-5) var(--space-5);
-	}
-
-	.category {
-		margin: 0 0 var(--space-2);
-		font-size: var(--text-xs);
-		font-weight: var(--weight-bold);
-		letter-spacing: var(--tracking-wide);
-		text-transform: uppercase;
-		color: var(--color-accent-strong);
-	}
-
-	.body h3 {
-		margin: 0 0 var(--space-2);
-		font-size: var(--text-xl);
-	}
-
-	.meta {
-		margin: 0 0 var(--space-4);
-		font-size: var(--text-sm);
-		color: var(--color-steel);
-	}
-
-	.cta {
-		display: inline-block;
-		padding: var(--space-2) var(--space-5);
-		border: 1px solid var(--color-accent);
-		color: var(--color-accent-strong);
-		font-weight: var(--weight-medium);
-		font-size: var(--text-sm);
-		letter-spacing: var(--tracking-wide);
-		text-transform: uppercase;
-		border-radius: var(--radius-sm);
-		transition: background var(--transition), color var(--transition);
-	}
-
-	.project-card:hover .cta {
-		background: var(--color-accent);
-		color: var(--color-on-accent);
-	}
+  .project-card {
+    display: block;
+    min-width: 0;
+  }
+  .project-photo {
+    aspect-ratio: 1.32;
+    background: var(--color-surface-alt);
+  }
+  .project-photo img {
+    transition:
+      transform 0.8s var(--ease),
+      filter 0.8s;
+    filter: saturate(0.8);
+  }
+  .project-open {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    background: var(--color-surface);
+    height: 44px;
+    width: 44px;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.4s var(--ease);
+  }
+  .project-card:hover .project-photo img {
+    transform: scale(1.045);
+    filter: saturate(1);
+  }
+  .project-card:hover .project-open,
+  .project-card:focus-visible .project-open {
+    opacity: 1;
+    transform: none;
+  }
+  .card-category {
+    display: flex;
+    justify-content: space-between;
+    font-size: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-accent);
+    margin-top: 22px;
+    margin-bottom: 12px;
+  }
+  .card-category > span:last-child {
+    color: var(--color-steel);
+  }
+  .project-card h3 {
+    font-size: clamp(23px, 2.2vw, 34px);
+    letter-spacing: -0.045em;
+    line-height: 1.2;
+  }
+  .card-meta {
+    font-size: 10px;
+    margin-top: 10px;
+  }
+  .card-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-top: 23px;
+  }
+  .card-link :global(svg) {
+    width: 22px;
+    height: 22px;
+    color: var(--color-accent);
+    transition: transform 0.3s;
+  }
+  .project-card:hover .card-link :global(svg) {
+    transform: translateX(7px);
+  }
+  @media (max-width: 550px) {
+    .project-photo {
+      aspect-ratio: 1.25;
+    }
+    .project-open {
+      width: 36px;
+      height: 36px;
+      right: 13px;
+      top: 13px;
+      opacity: 1;
+      transform: none;
+    }
+  }
 </style>

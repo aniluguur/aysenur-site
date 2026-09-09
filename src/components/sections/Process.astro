@@ -1,95 +1,154 @@
 ---
 const steps = [
-	{
-		title: 'Keşif',
-		description: 'Saha ziyareti ve ihtiyaç analiziyle projeyi netleştiriyoruz.',
-	},
-	{
-		title: 'Planlama',
-		description: 'Kapsamı, takvimi ve teknik gereksinimleri birlikte belirliyoruz.',
-	},
-	{
-		title: 'Uygulama',
-		description: 'Sahada uzman ekibimizle işi güvenle ve zamanında yürütüyoruz.',
-	},
-	{
-		title: 'Teslim',
-		description: 'Tamamlanan işi kontrol ederek eksiksiz teslim ediyoruz.',
-	},
-	{
-		title: 'Destek',
-		description: 'Teslim sonrasında da bakım ve destekle yanınızda oluyoruz.',
-	},
+  {
+    title: "Önce dinleriz.",
+    label: "Keşif",
+    text: "Sahayı yerinde görür, ihtiyacı ve mevcut koşulları birlikte değerlendiririz.",
+  },
+  {
+    title: "Doğru planlarız.",
+    label: "Planlama",
+    text: "Kapsamı, uygulama yöntemini ve takvimi işin başında netleştiririz.",
+  },
+  {
+    title: "Özenle uygularız.",
+    label: "Uygulama",
+    text: "İmalat ve montajı, planladığımız kalite ve güvenlik çerçevesinde yürütürüz.",
+  },
+  {
+    title: "Birlikte tamamlarız.",
+    label: "Teslim & destek",
+    text: "Kontrolleri yapar, sistemi teslim eder ve sonrasında da ulaşılabilir kalırız.",
+  },
 ];
 ---
 
-<section class="process">
-	<div class="inner">
-		<h2>Çalışma Sürecimiz</h2>
-
-		<ol class="steps">
-			{
-				steps.map((step, index) => (
-					<li class="step">
-						<span class="index">{String(index + 1).padStart(2, '0')}</span>
-						<h3>{step.title}</h3>
-						<p>{step.description}</p>
-					</li>
-				))
-			}
-		</ol>
-	</div>
+<section class="section process">
+  <div class="wrap">
+    <div class="section-top">
+      <p class="eyebrow">Nasıl çalışıyoruz?</p>
+      <span class="section-index">04 / SÜREÇ</span>
+    </div>
+    <div class="process-heading" data-reveal>
+      <h2>
+        İlk fikirden
+        <br />
+        son kontrole.
+      </h2>
+      <p>
+        İyi bir sonuç, her adımda aynı özeni gerektirir.
+        <br />
+        Bizim çalışma biçimimiz bu kadar net.
+      </p>
+    </div>
+    <ol class="steps">
+      {steps.map((step, index) => (
+        <li data-reveal>
+          <div class="step-top">
+            <span>0{index + 1}</span>
+            <span>{step.label}</span>
+          </div>
+          <h3>{step.title}</h3>
+          <p>{step.text}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
 </section>
-
 <style>
-	.process {
-		background: var(--color-surface-alt);
-	}
-
-	.inner {
-		max-width: var(--container);
-		margin-inline: auto;
-		padding: var(--space-7) var(--container-pad);
-	}
-
-	.steps {
-		display: grid;
-		gap: var(--space-6);
-		margin: var(--space-6) 0 0;
-		padding: 0;
-		list-style: none;
-	}
-
-	.step {
-		padding-top: var(--space-4);
-		border-top: var(--border-hairline);
-	}
-
-	.index {
-		display: block;
-		margin-bottom: var(--space-2);
-		font-size: var(--text-sm);
-		font-weight: var(--weight-bold);
-		letter-spacing: var(--tracking-wide);
-		color: var(--color-accent-strong);
-	}
-
-	.step h3 {
-		margin: 0 0 var(--space-2);
-		font-size: var(--text-lg);
-		color: var(--color-ink);
-	}
-
-	.step p {
-		margin: 0;
-		font-size: var(--text-sm);
-		color: var(--color-steel);
-	}
-
-	@media (min-width: 900px) {
-		.steps {
-			grid-template-columns: repeat(5, 1fr);
-			gap: var(--space-5);
-		}
-	}
+  .process {
+    background: var(--color-surface-alt);
+  }
+  .process-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    align-items: end;
+    margin-bottom: 65px;
+  }
+  .process-heading > p {
+    font-size: 12px;
+    line-height: 1.9;
+  }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 30px;
+  }
+  .steps li {
+    border-top: 1px solid #bfc4b6;
+    padding-top: 19px;
+  }
+  .step-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 44px;
+  }
+  .step-top > span:first-child {
+    font-size: 12px;
+    color: var(--color-accent);
+  }
+  .step-top > span:last-child {
+    font-size: 9px;
+    color: var(--color-steel);
+  }
+  .steps h3 {
+    font-size: 23px;
+    letter-spacing: -0.04em;
+    margin-bottom: 20px;
+  }
+  .steps p {
+    font-size: 11px;
+    line-height: 1.9;
+    max-width: 235px;
+  }
+  @media (max-width: 850px) {
+    .steps {
+      grid-template-columns: 1fr 1fr;
+      gap: 42px 28px;
+    }
+    .process-heading {
+      margin-bottom: 45px;
+    }
+    .step-top {
+      margin-bottom: 26px;
+    }
+  }
+  @media (max-width: 550px) {
+    .process-heading {
+      display: block;
+    }
+    .process-heading > p {
+      margin-top: 25px;
+    }
+    .steps {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+    .steps li {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 20px;
+    }
+    .step-top {
+      grid-column: 1/-1;
+      margin-bottom: 8px;
+    }
+    .steps h3 {
+      font-size: 23px;
+    }
+    .steps p {
+      font-size: 11px;
+    }
+  }
+  @media (max-width: 700px) {
+    .steps p,
+    .process-heading > p {
+      font-size: 13px;
+    }
+  }
 </style>

@@ -1,72 +1,97 @@
 ---
-import { getHomePage } from '../../lib/queries';
-
-const homePage = await getHomePage();
-const stats = homePage?.stats ?? [];
+import { getHomePage } from "../../lib/queries";
+import { hasContent } from "../../lib/media";
+const home = await getHomePage();
+const stats = (home?.stats || []).filter((stat) => hasContent(stat.value));
+const principles = [
+  { value: "Sahaya özel", label: "Her projenin kendi çözümü" },
+  { value: "Uçtan uca", label: "Planlamadan uygulamaya" },
+  { value: "Birlikte", label: "Teslim sonrasında da yanınızda" },
+];
+const items = stats.length ? stats : principles;
 ---
 
-<section class="stats">
-	<div class="inner">
-		<ul class="list">
-			{
-				stats.map((stat) => (
-					<li class="item">
-						<span class="value">{stat.value}</span>
-						<span class="label">{stat.label}</span>
-					</li>
-				))
-			}
-		</ul>
-	</div>
+<section
+  class="proof-strip"
+  aria-label={stats.length ? "Rakamlarla şirketimiz" : "Çalışma yaklaşımımız"}
+>
+  <div class="wrap proof-inner">
+    {items.map((item, index) => (
+      <div class="proof-item">
+        <span class="proof-number">0{index + 1}</span>
+        <div>
+          <strong>{item.value}</strong>
+          <p>{item.label}</p>
+        </div>
+      </div>
+    ))}
+  </div>
 </section>
-
 <style>
-	.stats {
-		background: var(--color-ink);
-		color: var(--color-on-dark);
-	}
-
-	.inner {
-		max-width: var(--container);
-		margin-inline: auto;
-		padding: var(--space-6) var(--container-pad);
-	}
-
-	.list {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		gap: var(--space-5);
-		list-style: none;
-		margin: 0;
-		padding: 0;
-	}
-
-	.item {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-1);
-		text-align: center;
-	}
-
-	.value {
-		font-size: var(--text-3xl);
-		font-weight: var(--weight-bold);
-		letter-spacing: var(--tracking-tight);
-		color: var(--color-harvest);
-	}
-
-	.label {
-		font-size: var(--text-xs);
-		font-weight: var(--weight-medium);
-		letter-spacing: var(--tracking-wide);
-		text-transform: uppercase;
-		color: var(--color-steel-light);
-	}
-
-	@media (min-width: 900px) {
-		.list {
-			grid-template-columns: repeat(4, 1fr);
-			gap: var(--space-6);
-		}
-	}
+  .proof-strip {
+    border-bottom: 1px solid var(--color-line);
+  }
+  .proof-inner {
+    display: flex;
+    padding-block: 36px;
+    gap: 30px;
+  }
+  .proof-item {
+    flex: 1;
+    display: flex;
+    gap: 20px;
+    padding-left: 30px;
+    border-left: 1px solid var(--color-line);
+  }
+  .proof-item:first-child {
+    border: 0;
+    padding-left: 0;
+  }
+  .proof-number {
+    font-size: 9px;
+    color: var(--color-accent);
+    padding-top: 5px;
+  }
+  .proof-item strong {
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: -0.04em;
+  }
+  .proof-item p {
+    font-size: 10px;
+    margin-top: 4px;
+  }
+  @media (max-width: 700px) {
+    .proof-inner {
+      gap: 18px;
+      padding-block: 25px;
+    }
+    .proof-item {
+      padding-left: 16px;
+      gap: 0;
+      display: block;
+    }
+    .proof-number {
+      display: block;
+      margin-bottom: 8px;
+    }
+    .proof-item strong {
+      font-size: 17px;
+    }
+    .proof-item p {
+      font-size: 9px;
+      line-height: 1.5;
+    }
+  }
+  @media (max-width: 400px) {
+    .proof-inner {
+      gap: 12px;
+    }
+    .proof-item {
+      padding-left: 12px;
+    }
+    .proof-item strong {
+      font-size: 15px;
+    }
+  }
 </style>

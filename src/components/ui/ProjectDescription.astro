@@ -1,0 +1,36 @@
+---
+interface Span {
+  text?: string;
+  marks?: string[];
+}
+interface Block {
+  _type?: string;
+  style?: string;
+  children?: Span[];
+}
+const { value } = Astro.props;
+const blocks: Block[] = Array.isArray(value) ? value : [];
+---
+
+<div class="prose">
+  {blocks
+    .filter((block) => block._type === "block")
+    .map((block) => {
+      const Tag = block.style === "h3" ? "h3" : "p";
+      return (
+        <Tag>
+          {block.children?.map((span) =>
+            span.marks?.includes("strong") ? (
+              <strong>
+                {span.marks.includes("em") ? <em>{span.text}</em> : span.text}
+              </strong>
+            ) : span.marks?.includes("em") ? (
+              <em>{span.text}</em>
+            ) : (
+              span.text
+            ),
+          )}
+        </Tag>
+      );
+    })}
+</div>

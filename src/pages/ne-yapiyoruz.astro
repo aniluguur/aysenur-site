@@ -1,7 +1,24 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import WhatWeDo from '../components/sections/WhatWeDo.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import WhatWeDo from "../components/sections/WhatWeDo.astro";
+import Process from "../components/sections/Process.astro";
+import ContactCta from "../components/sections/ContactCta.astro";
 ---
-<BaseLayout title="Ne Yapıyoruz">
-	<WhatWeDo />
+
+<BaseLayout title="Ne Yapıyoruz — Proje ve Uygulama">
+  <section class="page-intro wrap">
+    <p class="eyebrow">Ne yapıyoruz?</p>
+    <h1>
+      İhtiyaçtan çözüme.
+      <br />
+      <span class="muted">Her aşamada yanınızda.</span>
+    </h1>
+    <p class="lead">
+      Mekanik tesisattan tarımsal altyapıya, sahada karşılığı olan çözümler.
+      Planlıyor, uyguluyor, birlikte tamamlıyoruz.
+    </p>
+  </section>
+  <WhatWeDo />
+  <Process />
+  <ContactCta />
 </BaseLayout>

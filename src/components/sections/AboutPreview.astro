@@ -1,194 +1,183 @@
-<section class="about-preview">
-	<div class="row">
-		<div class="text">
-			<h2>Hakkımızda</h2>
-			<p>
-				Mekanik ve tarım sektöründe edindiğimiz saha deneyimiyle projeleri baştan sona güvenle
-				teslim ediyoruz. Ekibimiz, planlamadan uygulamaya kadar her aşamada yanınızda.
-			</p>
-			<a class="link" href="/hakkimizda">Devamını Oku →</a>
-		</div>
+---
+import { getAboutPage } from "../../lib/queries";
+import Arrow from "../ui/Arrow.astro";
+const about = await getAboutPage();
+---
 
-		<div class="gallery" aria-hidden="true">
-			<div class="carousel" id="about-carousel">
-				<div class="carousel-item item-main"></div>
-				<div class="stack">
-					<div class="carousel-item item-a"></div>
-					<div class="carousel-item item-b"></div>
-				</div>
-			</div>
-			<div class="progress-track">
-				<div class="progress-fill" id="about-progress"></div>
-			</div>
-		</div>
-	</div>
+<section class="section about-preview" id="yaklasim">
+  <div class="wrap">
+    <div class="section-top">
+      <p class="eyebrow">Bizi tanıyın</p>
+      <span class="section-index">01 / YAKLAŞIMIMIZ</span>
+    </div>
+    <div class="about-layout">
+      <div class="about-copy" data-reveal>
+        <h2>{about?.heroTitle || "Her iyi proje, sahayı anlamakla başlar."}</h2>
+        <p>{about?.heroDescription}</p>
+        <a class="text-link" href="/hakkimizda">
+          Hikâyemizi keşfedin <Arrow />
+        </a>
+        <div class="small-note">
+          <span>↳</span>
+          <p>
+            İhtiyacı anlayan planlama.
+            <br />
+            Sahada karşılığı olan çözümler.
+          </p>
+        </div>
+      </div>
+      <div class="collage" data-reveal>
+        <figure class="photo main-photo">
+          <img
+            src="/images/engineering.jpg"
+            width="1400"
+            height="927"
+            alt="Bir inşaat sahasında birlikte çalışan uygulama ekibi"
+            loading="lazy"
+          />
+        </figure>
+        <figure class="photo small-photo">
+          <img
+            src="/images/agriculture.jpg"
+            width="2200"
+            height="1238"
+            alt="Sıra halinde yetişen tarım bitkileri"
+            loading="lazy"
+          />
+        </figure>
+        <figure class="photo detail-photo">
+          <img
+            src="/images/installation.jpg"
+            width="1200"
+            height="800"
+            alt="Teknik çizimler üzerinde çalışan proje uzmanı"
+            loading="lazy"
+          />
+        </figure>
+        <div class="collage-mark" aria-hidden="true">
+          +
+        </div>
+        <p class="collage-caption">
+          SAHADAN İLHAM ALIYORUZ. <span>Temsili görseller</span>
+        </p>
+      </div>
+    </div>
+  </div>
 </section>
-
-<script>
-	const carousel = document.getElementById('about-carousel');
-	const fill = document.getElementById('about-progress');
-
-	if (carousel && fill) {
-		const updateProgress = () => {
-			const max = carousel.scrollWidth - carousel.clientWidth;
-			const ratio = max > 0 ? carousel.scrollLeft / max : 0;
-			fill.style.width = `${ratio * 100}%`;
-		};
-
-		carousel.addEventListener('scroll', updateProgress, { passive: true });
-		updateProgress();
-	}
-</script>
-
 <style>
-	.about-preview {
-		background: var(--color-surface-alt);
-		padding-block: var(--space-7);
-	}
-
-	.text {
-		padding-inline: var(--container-pad);
-	}
-
-	.text p {
-		max-width: 60ch;
-	}
-
-	.link {
-		display: inline-block;
-		font-size: var(--text-sm);
-		font-weight: var(--weight-medium);
-		color: var(--color-accent-strong);
-		text-decoration: none;
-	}
-
-	.link:hover {
-		text-decoration: underline;
-	}
-
-	.gallery {
-		margin-top: var(--space-6);
-	}
-
-	.carousel {
-		display: flex;
-		gap: var(--space-4);
-		overflow-x: auto;
-		scroll-snap-type: x mandatory;
-		scrollbar-width: none;
-		padding-inline: var(--container-pad);
-	}
-
-	.carousel::-webkit-scrollbar {
-		display: none;
-	}
-
-	.carousel-item {
-		flex: 0 0 78vw;
-		aspect-ratio: 4 / 3;
-		border-radius: var(--radius-md);
-		scroll-snap-align: start;
-	}
-
-	.item-main {
-		background: linear-gradient(135deg, var(--color-field), var(--color-steel));
-	}
-
-	.item-a {
-		background: linear-gradient(315deg, var(--color-harvest), var(--color-accent));
-	}
-
-	.item-b {
-		background: linear-gradient(45deg, var(--color-accent-strong), var(--color-field));
-	}
-
-	.progress-track {
-		height: 2px;
-		margin: var(--space-4) var(--container-pad) 0;
-		background: var(--color-line);
-	}
-
-	.progress-fill {
-		height: 100%;
-		width: 0%;
-		background: var(--color-accent);
-	}
-
-	/* mobilde .stack'in kendisi görünmez, item-a/item-b carousel'de item-main ile eşit sırada 3 ayrı slayt olur (referans sitedeki mobil swiper'ın 3 görsellik davranışıyla aynı) */
-	.stack {
-		display: contents;
-	}
-
-	@media (min-width: 900px) {
-		/* referans (mortenson.com/about, 1440px ölçüm): teaser tam ekran değil, container'lı — 400px görsel / 24px boşluk / 294px görsel sütunu / 130px boşluk / 400px metin */
-		.about-preview {
-			padding-block: var(--space-8);
-		}
-
-		.row {
-			max-width: var(--container);
-			margin-inline: auto;
-			padding-inline: var(--container-pad);
-			display: grid;
-			grid-template-columns: 1.36fr 1fr 1.36fr;
-			column-gap: var(--space-5);
-			min-height: 80vh;
-		}
-
-		.text {
-			grid-column: 3;
-			grid-row: 1;
-			align-self: center;
-			margin-left: var(--space-9);
-			padding-inline: 0;
-		}
-
-		.gallery {
-			display: contents;
-			margin-top: 0;
-		}
-
-		/* .carousel kendi kutusundan çıkıp öğelerini doğrudan .row'un grid'ine yerleştirir */
-		.carousel {
-			display: contents;
-			overflow: visible;
-			padding-inline: 0;
-		}
-
-		.carousel-item {
-			flex-basis: auto;
-			aspect-ratio: auto;
-		}
-
-		/* büyük görsel: satırın tamamını değil, referanstaki gibi kendi oranında bir yüksekliği alıp dikey ortalanıyor */
-		.item-main {
-			grid-column: 1;
-			grid-row: 1;
-			align-self: center;
-			width: 100%;
-			aspect-ratio: 400 / 539;
-		}
-
-		/* iç sütun artık gerçek bir flex konteyner: üstteki görsel alttakinin ~yarısı kadar (referans: 235px / 480px) */
-		.stack {
-			grid-column: 2;
-			grid-row: 1;
-			display: flex;
-			flex-direction: column;
-			gap: var(--space-3);
-			height: 100%;
-		}
-
-		.item-a {
-			flex: 1;
-		}
-
-		.item-b {
-			flex: 2;
-		}
-
-		.progress-track {
-			display: none;
-		}
-	}
+  .about-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: clamp(45px, 7vw, 110px);
+    align-items: center;
+  }
+  .about-copy h2 {
+    font-size: clamp(34px, 3.8vw, 57px);
+  }
+  .about-copy > p {
+    font-size: 13px;
+    line-height: 1.9;
+    max-width: 360px;
+    margin-top: 30px;
+  }
+  .about-copy > .text-link {
+    margin-top: 28px;
+  }
+  .small-note {
+    display: flex;
+    gap: 20px;
+    margin-top: 55px;
+    align-items: start;
+  }
+  .small-note > span {
+    color: var(--color-accent);
+    font-size: 25px;
+    line-height: 1;
+  }
+  .small-note p {
+    font-size: 10px;
+    line-height: 1.8;
+  }
+  .collage {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    grid-template-rows: 220px 210px;
+    gap: 16px;
+    position: relative;
+    padding-block: 35px;
+  }
+  .main-photo {
+    grid-row: 1/3;
+  }
+  .main-photo img {
+    object-position: 53% center;
+  }
+  .small-photo {
+    margin-top: -35px;
+    margin-bottom: 0;
+  }
+  .detail-photo {
+    margin-bottom: 35px;
+  }
+  .collage-mark {
+    position: absolute;
+    bottom: 40px;
+    right: -14px;
+    color: var(--color-accent);
+    font-size: 100px;
+    font-weight: 400;
+    line-height: 1;
+  }
+  .collage-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    font-size: 8px;
+    letter-spacing: 0.11em;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+  .collage-caption span {
+    font-size: 8px;
+    letter-spacing: 0;
+  }
+  @media (max-width: 850px) {
+    .about-layout {
+      grid-template-columns: 1fr;
+    }
+    .about-copy {
+      max-width: 650px;
+    }
+    .about-copy > p {
+      max-width: 480px;
+    }
+    .small-note {
+      display: none;
+    }
+    .collage {
+      max-width: 650px;
+      width: 100%;
+      grid-template-rows: 230px 200px;
+      margin-top: 15px;
+    }
+  }
+  @media (max-width: 500px) {
+    .collage {
+      grid-template-rows: 160px 150px;
+      gap: 10px;
+    }
+    .collage-mark {
+      font-size: 70px;
+      right: -9px;
+    }
+    .collage-caption {
+      font-size: 7px;
+    }
+  }
+  @media (max-width: 700px) {
+    .about-copy > p {
+      font-size: 14px;
+    }
+  }
 </style>

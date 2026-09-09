@@ -1,430 +1,381 @@
 ---
-import { getCategories, getSiteSettings } from '../../lib/queries';
-
-const categories = await getCategories();
-const siteSettings = await getSiteSettings();
-const companyName = siteSettings?.companyName ?? 'Şirket Adı';
-const path = Astro.url.pathname.replace(/\/$/, '') || '/';
-const isActive = (href) => path === (href.replace(/\/$/, '') || '/');
+import { getCategories, getSiteSettings } from "../../lib/queries";
+import BrandMark from "../ui/BrandMark.astro";
+import Arrow from "../ui/Arrow.astro";
+const [categories, settings] = await Promise.all([
+  getCategories(),
+  getSiteSettings(),
+]);
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const active = (href: string) =>
+  path === href || (href !== "/" && path.startsWith(`${href}/`));
 ---
 
-<header class="header" data-header>
-	<div class="bar">
-		<a class="brand" href="/">{companyName}</a>
-
-		<button
-			class="toggle"
-			type="button"
-			aria-expanded="false"
-			aria-controls="site-nav"
-			aria-label="Menü"
-			data-menu-toggle
-		>
-			<span class="toggle-box"><span class="toggle-line"></span></span>
-		</button>
-
-		<nav class="nav" id="site-nav" aria-label="Ana menü">
-			<ul class="nav-list">
-				<li>
-					<a class="nav-link" href="/" aria-current={isActive('/') ? 'page' : undefined}>Ana Sayfa</a>
-				</li>
-				<li>
-					<a
-						class="nav-link"
-						href="/hakkimizda"
-						aria-current={isActive('/hakkimizda') ? 'page' : undefined}>Biz Kimiz</a
-					>
-				</li>
-				<li>
-					<a
-						class="nav-link"
-						href="/ne-yapiyoruz"
-						aria-current={isActive('/ne-yapiyoruz') ? 'page' : undefined}>Ne Yapıyoruz</a
-					>
-				</li>
-				<li class="group" data-dropdown>
-					<button
-						class="nav-link trigger"
-						type="button"
-						aria-expanded="false"
-						aria-controls="is-kollarimiz"
-						data-dropdown-trigger
-					>
-						Hizmet Verdiğimiz Sektörler
-						<svg class="chevron" viewBox="0 0 12 8" aria-hidden="true"
-							><path d="M1 1.5 6 6.5l5-5" fill="none" stroke="currentColor" stroke-width="1.6" /></svg
-						>
-					</button>
-					<ul class="submenu" id="is-kollarimiz">
-						{
-							categories.map((category) => (
-								<li>
-									<a
-										class="submenu-link"
-										href={`/${category.slug}/`}
-										aria-current={isActive(`/${category.slug}/`) ? 'page' : undefined}
-									>
-										{category.title}
-									</a>
-								</li>
-							))
-						}
-					</ul>
-				</li>
-				<li>
-					<a
-						class="nav-link"
-						href="/projeler"
-						aria-current={isActive('/projeler') ? 'page' : undefined}>Projeler</a
-					>
-				</li>
-				<li>
-					<a
-						class="nav-link nav-cta"
-						href="/iletisim"
-						aria-current={isActive('/iletisim') ? 'page' : undefined}>İletişim</a
-					>
-				</li>
-			</ul>
-		</nav>
-	</div>
+<header class="site-header" data-header>
+  <div class="header-inner wrap">
+    <a
+      href="/"
+      class="brand"
+      aria-label={`${settings?.companyName || "Şirket Adı"} — Ana sayfa`}
+    >
+      <BrandMark />
+      <span>
+        {settings?.companyName || "Şirket Adı"}
+        <small>MEKANİK · TARIM</small>
+      </span>
+    </a>
+    <button
+      class="menu-toggle"
+      aria-expanded="false"
+      aria-controls="main-navigation"
+      aria-label="Menüyü aç"
+      data-menu-toggle
+    >
+      <span></span>
+      <span></span>
+    </button>
+    <nav id="main-navigation" aria-label="Ana menü" class="navigation">
+      <a
+        href="/hakkimizda"
+        aria-current={active("/hakkimizda") ? "page" : undefined}
+      >
+        Biz kimiz
+      </a>
+      <a
+        href="/ne-yapiyoruz"
+        aria-current={active("/ne-yapiyoruz") ? "page" : undefined}
+      >
+        Ne yapıyoruz
+      </a>
+      <div class="nav-dropdown" data-dropdown>
+        <button
+          class:list={[
+            "sector-trigger",
+            { current: categories.some((c) => active(`/${c.slug}`)) },
+          ]}
+          aria-expanded="false"
+          aria-controls="sector-menu"
+          data-sector-trigger
+        >
+          Sektörler{" "}
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path d="m2 4 4 4 4-4" stroke="currentColor" />
+          </svg>
+        </button>
+        <div id="sector-menu" class="sector-menu" hidden>
+          <p class="eyebrow">Çalıştığımız alanlar</p>
+          {categories.map((category, index) => (
+            <a
+              href={`/${category.slug}/`}
+              aria-current={active(`/${category.slug}`) ? "page" : undefined}
+            >
+              <span>
+                <small>0{index + 1}</small>
+                {category.title}
+              </span>
+              <Arrow />
+            </a>
+          ))}
+        </div>
+      </div>
+      <a
+        href="/projeler"
+        aria-current={active("/projeler") ? "page" : undefined}
+      >
+        Projeler
+      </a>
+      <a
+        class="header-cta"
+        href="/iletisim"
+        aria-current={active("/iletisim") ? "page" : undefined}
+      >
+        Birlikte çalışalım <Arrow />
+      </a>
+    </nav>
+  </div>
 </header>
-
 <style>
-	.header {
-		position: sticky;
-		top: 0;
-		z-index: 50;
-		background: var(--color-surface);
-		border-bottom: var(--border-hairline);
-	}
-
-	.bar {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: var(--space-4);
-		max-width: var(--container);
-		min-height: var(--header-height);
-		margin-inline: auto;
-		padding-inline: var(--container-pad);
-	}
-
-	.brand {
-		font-family: var(--font-display);
-		font-size: var(--text-lg);
-		font-weight: var(--weight-bold);
-		letter-spacing: var(--tracking-wide);
-		text-transform: uppercase;
-		color: var(--color-ink);
-		text-decoration: none;
-	}
-
-	.toggle {
-		display: grid;
-		place-items: center;
-		width: 2.75rem;
-		height: 2.75rem;
-		margin-right: calc(var(--space-3) * -1);
-		background: none;
-		border: 0;
-		color: var(--color-ink);
-		cursor: pointer;
-	}
-
-	.toggle-box {
-		position: relative;
-		display: block;
-		width: 22px;
-		height: 14px;
-	}
-
-	.toggle-line,
-	.toggle-line::before,
-	.toggle-line::after {
-		position: absolute;
-		left: 0;
-		width: 100%;
-		height: 2px;
-		background: currentColor;
-		transition: transform var(--transition), opacity var(--transition);
-	}
-
-	.toggle-line {
-		top: 6px;
-	}
-
-	.toggle-line::before,
-	.toggle-line::after {
-		content: '';
-	}
-
-	.toggle-line::before {
-		top: -6px;
-	}
-
-	.toggle-line::after {
-		top: 6px;
-	}
-
-	.header.nav-open .toggle-line {
-		background: transparent;
-	}
-
-	.header.nav-open .toggle-line::before {
-		transform: translateY(6px) rotate(45deg);
-	}
-
-	.header.nav-open .toggle-line::after {
-		transform: translateY(-6px) rotate(-45deg);
-	}
-
-	.nav {
-		display: none;
-		position: absolute;
-		inset-inline: 0;
-		top: 100%;
-		background: var(--color-surface);
-		border-bottom: var(--border-hairline);
-		box-shadow: var(--shadow-raised);
-	}
-
-	.header.nav-open .nav {
-		display: block;
-	}
-
-	.nav-list {
-		list-style: none;
-		margin: 0;
-		padding: var(--space-2) var(--container-pad) var(--space-5);
-	}
-
-	.nav-link {
-		display: flex;
-		align-items: center;
-		gap: var(--space-2);
-		width: 100%;
-		padding: var(--space-3) 0;
-		font-family: var(--font-display);
-		font-size: var(--text-base);
-		font-weight: var(--weight-medium);
-		color: var(--color-graphite);
-		text-decoration: none;
-		background: none;
-		border: 0;
-		border-bottom: var(--border-hairline);
-		text-align: left;
-		cursor: pointer;
-	}
-
-	.nav-link[aria-current='page'] {
-		color: var(--color-accent-strong);
-	}
-
-	.nav-cta {
-		justify-content: center;
-		margin-top: var(--space-2);
-		padding: var(--space-3) var(--space-6);
-		background: var(--color-accent);
-		color: var(--color-on-accent);
-		text-align: center;
-		border-bottom: 0;
-		border-radius: var(--radius-sm);
-		transition: background var(--transition);
-	}
-
-	.nav-cta:hover,
-	.nav-cta[aria-current='page'] {
-		color: var(--color-on-accent);
-		background: var(--color-accent-strong);
-	}
-
-	.chevron {
-		width: 12px;
-		flex: none;
-		transition: transform var(--transition);
-	}
-
-	[data-dropdown].is-open .chevron {
-		transform: rotate(180deg);
-	}
-
-	.submenu {
-		display: none;
-		list-style: none;
-		margin: 0;
-		padding: var(--space-2) 0 var(--space-3) var(--space-4);
-		border-bottom: var(--border-hairline);
-		border-left: 2px solid var(--color-accent);
-	}
-
-	[data-dropdown].is-open .submenu {
-		display: block;
-	}
-
-	.submenu-link {
-		display: block;
-		padding: var(--space-2) 0;
-		font-size: var(--text-sm);
-		color: var(--color-steel);
-		text-decoration: none;
-	}
-
-	.submenu-link:hover,
-	.submenu-link[aria-current='page'] {
-		color: var(--color-accent-strong);
-	}
-
-	@media (min-width: 900px) {
-		.toggle {
-			display: none;
-		}
-
-		.nav,
-		.header.nav-open .nav {
-			display: block;
-			position: static;
-			border: 0;
-			box-shadow: none;
-			background: none;
-		}
-
-		.nav-list {
-			display: flex;
-			align-items: center;
-			gap: var(--space-5);
-			padding: 0;
-		}
-
-		.group {
-			position: relative;
-		}
-
-		.nav-link {
-			width: auto;
-			padding: var(--space-2) 0;
-			font-size: var(--text-sm);
-			letter-spacing: var(--tracking-wide);
-			text-transform: uppercase;
-			border-bottom: 2px solid transparent;
-		}
-
-		.nav-link:hover,
-		.nav-link[aria-current='page'] {
-			color: var(--color-ink);
-			border-bottom-color: var(--color-accent);
-		}
-
-		.nav-cta {
-			margin-top: 0;
-			padding: var(--space-2) var(--space-5);
-			border-bottom: 0;
-		}
-
-		.nav-cta:hover,
-		.nav-cta[aria-current='page'] {
-			color: var(--color-on-accent);
-			border-bottom: 0;
-		}
-
-		.submenu,
-		[data-dropdown].is-open .submenu {
-			display: block;
-			position: absolute;
-			top: calc(100% + var(--space-2));
-			left: calc(var(--space-4) * -1);
-			min-width: 14rem;
-			padding: var(--space-2) 0;
-			background: var(--color-surface);
-			border: var(--border-hairline);
-			border-left: 2px solid var(--color-accent);
-			border-radius: var(--radius-sm);
-			box-shadow: var(--shadow-raised);
-			opacity: 0;
-			visibility: hidden;
-			transform: translateY(-4px);
-			transition: opacity var(--transition), transform var(--transition), visibility var(--transition);
-		}
-
-		[data-dropdown].is-open .submenu {
-			opacity: 1;
-			visibility: visible;
-			transform: none;
-		}
-
-		/* Trigger ile menü arasındaki boşlukta pointerleave tetiklenmesin */
-		.submenu::before {
-			content: '';
-			position: absolute;
-			inset-inline: 0;
-			top: calc(var(--space-2) * -1);
-			height: var(--space-2);
-		}
-
-		.submenu-link {
-			padding: var(--space-2) var(--space-4);
-			font-size: var(--text-sm);
-		}
-
-		.submenu-link:hover {
-			background: var(--color-surface-alt);
-		}
-	}
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-line);
+    transition: box-shadow 0.3s;
+  }
+  .site-header.scrolled {
+    box-shadow: 0 5px 25px #20292208;
+  }
+  .header-inner {
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+  }
+  .brand {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .brand > span {
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    line-height: 1.15;
+  }
+  .brand small {
+    display: block;
+    font-size: 7px;
+    letter-spacing: 0.2em;
+    margin-top: 7px;
+    font-weight: 600;
+  }
+  .navigation {
+    display: flex;
+    align-items: center;
+    gap: clamp(20px, 2.4vw, 40px);
+  }
+  .navigation > a,
+  .sector-trigger {
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .navigation a[aria-current="page"],
+  .current {
+    color: var(--color-accent);
+  }
+  .navigation > a:hover,
+  .sector-trigger:hover {
+    color: var(--color-accent);
+  }
+  .sector-trigger {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    background: none;
+    border: none;
+    padding: 20px 0;
+  }
+  .sector-trigger svg {
+    transition: transform 0.3s;
+  }
+  .sector-trigger[aria-expanded="true"] svg {
+    transform: rotate(180deg);
+  }
+  .nav-dropdown {
+    position: relative;
+  }
+  .sector-menu {
+    position: absolute;
+    top: calc(100% + 17px);
+    left: -30px;
+    width: 320px;
+    background: var(--color-surface);
+    padding: 28px 30px;
+    box-shadow: 0 24px 40px #20292216;
+    border: 1px solid var(--color-line);
+  }
+  .sector-menu .eyebrow {
+    margin-bottom: 18px;
+    font-size: 9px;
+  }
+  .sector-menu > a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--color-line);
+    padding: 17px 0;
+    font-size: 20px;
+  }
+  .sector-menu small {
+    font-size: 9px;
+    margin-right: 15px;
+    color: var(--color-steel);
+  }
+  .header-cta {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 14px 18px;
+    border: 1px solid var(--color-line);
+  }
+  .header-cta :global(svg) {
+    width: 17px;
+    height: 17px;
+  }
+  .menu-toggle {
+    display: none;
+  }
+  .sector-menu a:hover {
+    color: var(--color-accent);
+  }
+  @media (max-width: 1000px) {
+    .header-inner {
+      gap: 18px;
+    }
+    .navigation {
+      gap: 20px;
+    }
+    .brand > span {
+      font-size: 18px;
+    }
+    .header-cta {
+      padding: 12px;
+      gap: 14px;
+    }
+  }
+  @media (max-width: 850px) {
+    .menu-toggle {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 44px;
+      height: 44px;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid var(--color-line);
+      background: none;
+    }
+    .menu-toggle span {
+      width: 18px;
+      height: 1px;
+      background: currentColor;
+      transition: transform 0.25s;
+    }
+    .menu-toggle[aria-expanded="true"] span:first-child {
+      transform: translateY(3.5px) rotate(45deg);
+    }
+    .menu-toggle[aria-expanded="true"] span:last-child {
+      transform: translateY(-3.5px) rotate(-45deg);
+    }
+    .navigation {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      height: calc(100dvh - var(--header-height));
+      overflow: auto;
+      padding: 24px var(--gutter) 40px;
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-line);
+    }
+    .site-header.nav-open .navigation {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+    }
+    .navigation > a,
+    .sector-trigger {
+      font-size: 24px;
+      font-weight: 400;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--color-line);
+      width: 100%;
+    }
+    .sector-trigger {
+      justify-content: space-between;
+    }
+    .sector-menu {
+      position: static;
+      box-shadow: none;
+      border: 0;
+      width: 100%;
+      padding: 20px 0 10px 20px;
+    }
+    .sector-menu .eyebrow {
+      display: none;
+    }
+    .sector-menu > a {
+      font-size: 20px;
+    }
+    .header-cta {
+      margin-top: 25px;
+      padding: 20px !important;
+      font-size: 15px !important;
+      justify-content: space-between;
+    }
+    .brand > span {
+      font-size: 20px;
+    }
+  }
 </style>
-
 <script>
-	const header = document.querySelector('[data-header]');
-	const toggle = header.querySelector('[data-menu-toggle]');
-	const dropdown = header.querySelector('[data-dropdown]');
-	const trigger = dropdown.querySelector('[data-dropdown-trigger]');
-	const hoverable = window.matchMedia('(min-width: 900px) and (hover: hover)');
-
-	const setDropdown = (open) => {
-		dropdown.classList.toggle('is-open', open);
-		trigger.setAttribute('aria-expanded', String(open));
-	};
-
-	const setNav = (open) => {
-		header.classList.toggle('nav-open', open);
-		toggle.setAttribute('aria-expanded', String(open));
-		if (!open) setDropdown(false);
-	};
-
-	toggle.addEventListener('click', () => {
-		setNav(!header.classList.contains('nav-open'));
-	});
-
-	trigger.addEventListener('click', () => {
-		setDropdown(!dropdown.classList.contains('is-open'));
-	});
-
-	dropdown.addEventListener('pointerenter', () => {
-		if (hoverable.matches) setDropdown(true);
-	});
-
-	dropdown.addEventListener('pointerleave', () => {
-		if (hoverable.matches) setDropdown(false);
-	});
-
-	dropdown.addEventListener('focusout', (event) => {
-		if (hoverable.matches && !dropdown.contains(event.relatedTarget)) setDropdown(false);
-	});
-
-	document.addEventListener('click', (event) => {
-		if (!header.contains(event.target)) {
-			setDropdown(false);
-			setNav(false);
-		}
-	});
-
-	document.addEventListener('keydown', (event) => {
-		if (event.key !== 'Escape') return;
-		setDropdown(false);
-		setNav(false);
-	});
-
-	hoverable.addEventListener('change', () => {
-		setDropdown(false);
-		setNav(false);
-	});
+  const header = document.querySelector<HTMLElement>("[data-header]");
+  if (header) {
+    const toggle =
+      header.querySelector<HTMLButtonElement>("[data-menu-toggle]")!;
+    const trigger = header.querySelector<HTMLButtonElement>(
+      "[data-sector-trigger]",
+    )!;
+    const menu = header.querySelector<HTMLElement>("#sector-menu")!;
+    const nav = header.querySelector<HTMLElement>(".navigation")!;
+    const setSector = (open: boolean) => {
+      trigger.setAttribute("aria-expanded", String(open));
+      menu.hidden = !open;
+    };
+    const setNav = (open: boolean) => {
+      header.classList.toggle("nav-open", open);
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Menüyü kapat" : "Menüyü aç");
+      document.body.classList.toggle("menu-open", open);
+      if (!open) setSector(false);
+    };
+    toggle.addEventListener("click", () =>
+      setNav(toggle.getAttribute("aria-expanded") !== "true"),
+    );
+    trigger.addEventListener("click", () => setSector(menu.hidden));
+    document.addEventListener("click", (event) => {
+      if (!header.contains(event.target as Node)) {
+        setSector(false);
+        setNav(false);
+      }
+    });
+    header.addEventListener("focusout", (event) => {
+      if (!header.contains(event.relatedTarget as Node)) setSector(false);
+    });
+    header.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        if (!menu.hidden) {
+          setSector(false);
+          trigger.focus();
+        } else {
+          setNav(false);
+          toggle.focus();
+        }
+      }
+      if (event.key === "Tab" && header.classList.contains("nav-open")) {
+        const items = [
+          toggle,
+          ...Array.from(nav.querySelectorAll<HTMLElement>("a,button")).filter(
+            (el) => el.getClientRects().length > 0,
+          ),
+        ];
+        if (event.shiftKey && document.activeElement === items[0]) {
+          event.preventDefault();
+          items.at(-1)?.focus();
+        } else if (!event.shiftKey && document.activeElement === items.at(-1)) {
+          event.preventDefault();
+          toggle.focus();
+        }
+      }
+    });
+    window
+      .matchMedia("(min-width:851px)")
+      .addEventListener("change", () => setNav(false));
+    const onScroll = () =>
+      header.classList.toggle("scrolled", window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  }
 </script>

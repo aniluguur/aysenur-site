@@ -1,81 +1,99 @@
 ---
 const values = [
-	{
-		title: 'Mühendislik Kalitesi',
-		description: 'Her projeyi teknik standartlara uygun, doğru mühendislikle hayata geçiriyoruz.',
-	},
-	{
-		title: 'Zamanında Teslim',
-		description: 'Belirlediğimiz takvime bağlı kalarak işi söz verdiğimiz sürede tamamlıyoruz.',
-	},
-	{
-		title: 'Saha Deneyimi',
-		description: 'Hem mekanik hem tarım alanında edindiğimiz saha bilgisiyle fark yaratıyoruz.',
-	},
-	{
-		title: 'Teslim Sonrası Destek',
-		description: 'Proje tesliminden sonra da bakım ve destekle yanınızda olmaya devam ediyoruz.',
-	},
+  {
+    title: "Sahadan gelen bilgi",
+    text: "Çözümü masa başında bırakmıyor, uygulama koşullarına göre şekillendiriyoruz.",
+  },
+  {
+    title: "Açık iletişim, net sorumluluk",
+    text: "Neyi, ne zaman, nasıl yapacağımızı baştan konuşuyoruz. Her aşamada kiminle iletişim kuracağınız belli.",
+  },
+  {
+    title: "Uzun ömürlü düşünmek",
+    text: "Yalnızca teslim gününü değil, sistemin yıllar içindeki kullanımını ve bakımını da düşünüyoruz.",
+  },
 ];
 ---
 
-<section class="why-us">
-	<div class="inner">
-		<h2>Neden Biz?</h2>
-
-		<ul class="grid">
-			{
-				values.map((value) => (
-					<li class="card">
-						<h3>{value.title}</h3>
-						<p>{value.description}</p>
-					</li>
-				))
-			}
-		</ul>
-	</div>
+<section class="section why-us">
+  <div class="wrap why-layout">
+    <div data-reveal>
+      <p class="eyebrow">Neden birlikte çalışalım?</p>
+      <h2>
+        Güven, her gün
+        <br />
+        yeniden inşa edilir.
+      </h2>
+      <p class="why-lead">
+        Bizim için işin kalitesi, kurduğumuz ilişkinin kalitesinden ayrı değil.
+      </p>
+    </div>
+    <div class="value-list">
+      {values.map((value, index) => (
+        <div class="value-row" data-reveal>
+          <span>0{index + 1}</span>
+          <div>
+            <h3>{value.title}</h3>
+            <p>{value.text}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
 </section>
-
 <style>
-	.why-us {
-		background: var(--color-surface);
-	}
-
-	.inner {
-		max-width: var(--container);
-		margin-inline: auto;
-		padding: var(--space-7) var(--container-pad);
-	}
-
-	.grid {
-		display: grid;
-		gap: var(--space-5);
-		margin: var(--space-6) 0 0;
-		padding: 0;
-		list-style: none;
-	}
-
-	.card {
-		padding: var(--space-5);
-		background: var(--color-surface-alt);
-		border-radius: var(--radius-md);
-	}
-
-	.card h3 {
-		margin: 0 0 var(--space-2);
-		font-size: var(--text-lg);
-		color: var(--color-ink);
-	}
-
-	.card p {
-		margin: 0;
-		font-size: var(--text-sm);
-		color: var(--color-steel);
-	}
-
-	@media (min-width: 900px) {
-		.grid {
-			grid-template-columns: repeat(4, 1fr);
-		}
-	}
+  .why-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+  }
+  .why-us .eyebrow {
+    margin-bottom: 30px;
+  }
+  .why-us h2 {
+    font-size: clamp(34px, 3.7vw, 55px);
+  }
+  .why-lead {
+    font-size: 13px;
+    margin-top: 30px;
+    max-width: 340px;
+  }
+  .value-row {
+    display: flex;
+    gap: 28px;
+    border-top: 1px solid var(--color-line);
+    padding: 28px 0;
+  }
+  .value-row:last-child {
+    border-bottom: 1px solid var(--color-line);
+  }
+  .value-row > span {
+    font-size: 9px;
+    color: var(--color-accent);
+    padding-top: 5px;
+  }
+  .value-row h3 {
+    font-size: 22px;
+    letter-spacing: -0.03em;
+    margin-bottom: 15px;
+  }
+  .value-row p {
+    font-size: 12px;
+    line-height: 1.9;
+  }
+  @media (max-width: 850px) {
+    .why-layout {
+      grid-template-columns: 1fr;
+      gap: 42px;
+    }
+    .why-lead {
+      max-width: 450px;
+    }
+  }
+  @media (max-width: 700px) {
+    .value-row p,
+    .why-lead {
+      font-size: 14px;
+    }
+  }
 </style>

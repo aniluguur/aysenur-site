@@ -1,97 +1,167 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import ProjectCard from '../../components/projects/ProjectCard.astro';
-import { getCategories, getProjectsByCategory } from '../../lib/queries';
-
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCategories, getProjectsByCategory } from "../../lib/queries";
+import { imageUrl, sectorImage } from "../../lib/media";
+import { services } from "../../lib/services";
+import ProjectCard from "../../components/projects/ProjectCard.astro";
+import ContactCta from "../../components/sections/ContactCta.astro";
+import Arrow from "../../components/ui/Arrow.astro";
 export async function getStaticPaths() {
-	const categories = await getCategories();
-	return categories.map((category) => ({
-		params: { isKoluSlug: category.slug },
-		props: { category },
-	}));
+  return (await getCategories()).map((category) => ({
+    params: { isKoluSlug: category.slug },
+    props: { category },
+  }));
 }
-
 const { category } = Astro.props;
-const categoryProjects = await getProjectsByCategory(category.slug);
+const projects = await getProjectsByCategory(category.slug);
+const items = services[category.slug] || [];
 ---
 
-<BaseLayout title={category.title}>
-	<section class="hero">
-		<div class="inner">
-			<p class="eyebrow">Hizmet Verdiğimiz Sektörler</p>
-			<h1>{category.title}</h1>
-			<p class="lead">{category.description}</p>
-		</div>
-	</section>
-
-	<section class="projects">
-		<div class="inner">
-			{
-				categoryProjects.length > 0 ? (
-					<div class="grid">
-						{categoryProjects.map((project) => (
-							<ProjectCard project={project} />
-						))}
-					</div>
-				) : (
-					<p class="empty">Yakında projelerimizi burada paylaşacağız.</p>
-				)
-			}
-		</div>
-	</section>
+<BaseLayout
+  title={`${category.title} — Çalışma Alanlarımız`}
+  description={category.description}
+>
+  <section class="wrap page-intro sector-intro">
+    <div>
+      <nav class="breadcrumb" aria-label="Sayfa yolu">
+        <a href="/">Ana sayfa</a>
+        <span>/</span>
+        <a href="/ne-yapiyoruz">Sektörler</a>
+        <span>/</span>
+        <span>{category.title}</span>
+      </nav>
+      <p class="eyebrow">Proje & uygulama</p>
+      <h1>
+        {category.title}
+        <span class="accent">.</span>
+      </h1>
+      <p class="lead">{category.description}</p>
+      <a class="text-link" href="#sektor-projeleri">
+        Projeleri keşfedin <Arrow />
+      </a>
+    </div>
+    <figure class="photo sector-cover">
+      <img
+        src={imageUrl(category.coverImage, 1400, sectorImage(category.slug))}
+        alt={category.coverImage?.alt || `${category.title} alanı`}
+        width="1400"
+        height="1100"
+        fetchpriority="high"
+      />
+      {!category.coverImage?.asset && (
+        <span class="photo-credit">Temsili görsel</span>
+      )}
+    </figure>
+  </section>
+  {items.length > 0 && (
+    <section class="sector-services wrap">
+      <p class="eyebrow">Neler yapıyoruz?</p>
+      <ul>
+        {items.map((item, index) => (
+          <li>
+            <span>0{index + 1}</span>
+            {item}
+            <Arrow />
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+  <section class="section wrap" id="sektor-projeleri">
+    <div class="section-top">
+      <p class="eyebrow">Sahadaki karşılığı</p>
+      <span class="section-index">
+        {String(projects.length).padStart(2, "0")} PROJE
+      </span>
+    </div>
+    <h2 class="projects-heading">{category.title} projelerimiz.</h2>
+    {projects.length ? (
+      <div class="project-grid">
+        {projects.map((project, index) => (
+          <div data-reveal>
+            <ProjectCard project={project} index={index} />
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p class="empty-state">
+        Bu alandaki projelerimizi yakında burada paylaşacağız.
+      </p>
+    )}
+  </section>
+  <ContactCta />
 </BaseLayout>
-
 <style>
-	.hero {
-		background: var(--color-ink);
-		color: var(--color-on-dark);
-	}
-
-	.hero .inner {
-		max-width: var(--container);
-		margin-inline: auto;
-		padding: var(--space-8) var(--container-pad);
-	}
-
-	.eyebrow {
-		margin: 0 0 var(--space-3);
-		font-size: var(--text-sm);
-		font-weight: var(--weight-bold);
-		letter-spacing: var(--tracking-wide);
-		text-transform: uppercase;
-		color: var(--color-harvest);
-	}
-
-	.hero h1 {
-		max-width: 18ch;
-		color: var(--color-on-dark);
-	}
-
-	.hero .lead {
-		max-width: 48ch;
-		font-size: var(--text-lg);
-		color: var(--color-steel-light);
-	}
-
-	@media (min-width: 900px) {
-		.hero .inner {
-			padding-block: var(--space-9);
-		}
-	}
-
-	.projects .inner {
-		max-width: var(--container);
-		margin-inline: auto;
-		padding: var(--space-7) var(--container-pad);
-	}
-
-	.grid {
-		display: grid;
-		gap: var(--space-5);
-		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-	}
-
-	.empty {
-		color: var(--color-steel);
-	}
+  .sector-intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .sector-cover {
+    height: 480px;
+  }
+  .sector-intro .text-link {
+    margin-top: 30px;
+  }
+  .sector-services {
+    padding-block: 45px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 40px;
+    border-top: 1px solid var(--color-line);
+  }
+  .sector-services > .eyebrow {
+    align-self: start;
+    padding-top: 20px;
+  }
+  .sector-services ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .sector-services li {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--color-line);
+    font-size: 20px;
+    letter-spacing: -0.03em;
+  }
+  .sector-services li span {
+    font-size: 9px;
+    color: var(--color-accent);
+  }
+  .sector-services li :global(svg) {
+    margin-left: auto;
+    width: 18px;
+  }
+  .projects-heading {
+    margin-bottom: 50px;
+  }
+  @media (max-width: 800px) {
+    .sector-intro {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .sector-cover {
+      height: 350px;
+    }
+    .sector-services {
+      grid-template-columns: 1fr;
+      gap: 22px;
+    }
+    .sector-services li {
+      font-size: 18px;
+    }
+    .sector-intro h1 {
+      font-size: 64px;
+    }
+  }
+  @media (max-width: 430px) {
+    .sector-intro h1 {
+      font-size: 48px;
+    }
+  }
 </style>

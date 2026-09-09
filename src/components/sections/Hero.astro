@@ -1,72 +1,288 @@
 ---
-import { getHomePage } from '../../lib/queries';
-
-const homePage = await getHomePage();
+import { getHomePage } from "../../lib/queries";
+import Arrow from "../ui/Arrow.astro";
+const home = await getHomePage();
+const title = home?.heroTitle || "Sahada güvenilir, projede kalıcı çözümler.";
+const comma = title.indexOf(",");
 ---
 
 <section class="hero">
-	<div class="inner">
-		<p class="eyebrow">{homePage?.heroEyebrow ?? ''}</p>
-		<h1>{homePage?.heroTitle ?? ''}</h1>
-		<p class="lead">{homePage?.heroDescription ?? ''}</p>
-		<a class="cta" href="/iletisim">İletişime Geçin</a>
-	</div>
+  <div class="wrap hero-heading">
+    <p class="eyebrow hero-eyebrow">
+      {home?.heroEyebrow || "Mekanik ve tarım çözümleri"}
+    </p>
+    <div class="hero-grid">
+      <h1>
+        {comma >= 0 ? (
+          <>
+            {title.slice(0, comma + 1)}
+            <br />
+            <span>{title.slice(comma + 1).trim()}</span>
+          </>
+        ) : (
+          title
+        )}
+      </h1>
+      <div class="hero-aside">
+        <p>{home?.heroDescription}</p>
+        <a href="/projeler" class="text-link">
+          Projelerimizi keşfedin <Arrow />
+        </a>
+      </div>
+    </div>
+    <div class="hero-meta">
+      <span>PLANLAMA / UYGULAMA / DESTEK</span>
+      <a href="#yaklasim">
+        Aşağı kaydır <span>↓</span>
+      </a>
+    </div>
+  </div>
+  <div class="hero-image photo">
+    <img
+      src="/images/field.jpg"
+      alt="Gün batımında geniş bir tarım arazisi"
+      width="2200"
+      height="1238"
+      fetchpriority="high"
+    />
+    <div class="image-grid" aria-hidden="true">
+      <i></i>
+      <i></i>
+      <i></i>
+    </div>
+    <div class="wrap image-caption">
+      <p>
+        Topraktan tesise.
+        <br />
+        Bugünden geleceğe.
+      </p>
+      <div>
+        <span class="image-caption-label">AYNI ÖZEN. HER SAHADA.</span>
+        <a
+          href="/ne-yapiyoruz"
+          aria-label="Çalışma alanlarımızı keşfedin"
+          class="round-link"
+        >
+          <Arrow />
+        </a>
+      </div>
+    </div>
+    <span class="photo-credit">Temsili saha görseli</span>
+  </div>
 </section>
-
 <style>
-	.hero {
-		background: var(--color-ink);
-		color: var(--color-on-dark);
-	}
-
-	.inner {
-		max-width: var(--container);
-		margin-inline: auto;
-		padding: var(--space-8) var(--container-pad);
-	}
-
-	.eyebrow {
-		margin: 0 0 var(--space-3);
-		font-size: var(--text-sm);
-		font-weight: var(--weight-bold);
-		letter-spacing: var(--tracking-wide);
-		text-transform: uppercase;
-		color: var(--color-harvest);
-	}
-
-	h1 {
-		max-width: 18ch;
-		color: var(--color-on-dark);
-	}
-
-	.lead {
-		max-width: 48ch;
-		font-size: var(--text-lg);
-		color: var(--color-steel-light);
-	}
-
-	.cta {
-		display: inline-block;
-		margin-top: var(--space-2);
-		padding: var(--space-3) var(--space-6);
-		background: var(--color-accent);
-		color: var(--color-on-accent);
-		font-weight: var(--weight-medium);
-		font-size: var(--text-sm);
-		letter-spacing: var(--tracking-wide);
-		text-transform: uppercase;
-		text-decoration: none;
-		border-radius: var(--radius-sm);
-		transition: background var(--transition);
-	}
-
-	.cta:hover {
-		background: var(--color-accent-strong);
-	}
-
-	@media (min-width: 900px) {
-		.inner {
-			padding-block: var(--space-9);
-		}
-	}
+  .hero-heading {
+    padding-top: 58px;
+  }
+  .hero-eyebrow {
+    margin-bottom: 25px;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(200px, 1fr);
+    gap: 60px;
+    align-items: end;
+  }
+  .hero h1 {
+    font-size: clamp(42px, 5.9vw, 86px);
+    line-height: 1.1;
+    max-width: 960px;
+    letter-spacing: -0.065em;
+  }
+  .hero h1 span {
+    color: #797e70;
+  }
+  .hero-aside {
+    padding-bottom: 8px;
+  }
+  .hero-aside p {
+    font-size: 12px;
+    line-height: 1.9;
+    max-width: 260px;
+  }
+  .hero-aside .text-link {
+    margin-top: 23px;
+    font-size: 11px;
+    width: 100%;
+  }
+  .hero-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 43px;
+    padding-bottom: 24px;
+    font-size: 9px;
+    letter-spacing: 0.13em;
+  }
+  .hero-meta > a {
+    display: flex;
+    gap: 25px;
+    align-items: center;
+    letter-spacing: 0;
+  }
+  .hero-meta > a span {
+    font-size: 18px;
+  }
+  .hero-image {
+    height: clamp(370px, 41vw, 620px);
+    background: var(--color-field);
+  }
+  .hero-image > img {
+    object-position: center 63%;
+    animation: hero-image 1.5s var(--ease) both;
+  }
+  .hero-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, #20292200 30%, #17231b99);
+  }
+  .image-grid {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .image-grid i {
+    border-right: 1px solid #ffffff22;
+  }
+  .image-caption {
+    position: absolute;
+    bottom: 55px;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+  }
+  .image-caption > p {
+    font-size: clamp(30px, 3.6vw, 54px);
+    line-height: 1.15;
+    letter-spacing: -0.04em;
+    color: white;
+  }
+  .image-caption > div {
+    display: flex;
+    align-items: center;
+    gap: 35px;
+  }
+  .image-caption-label {
+    font-size: 9px;
+    letter-spacing: 0.13em;
+    color: white;
+  }
+  .round-link {
+    height: 70px;
+    width: 70px;
+    display: grid;
+    place-items: center;
+    border: 1px solid #ffffff70;
+    border-radius: 50%;
+    color: white;
+    transition:
+      background 0.3s,
+      transform 0.3s;
+  }
+  .round-link:hover {
+    background: var(--color-accent);
+    transform: rotate(10deg);
+  }
+  .hero-image .photo-credit {
+    z-index: 3;
+    font-size: 8px;
+    bottom: 12px;
+    background: none;
+    opacity: 0.85;
+  }
+  @keyframes hero-image {
+    from {
+      transform: scale(1.045);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+  @media (max-width: 850px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+      gap: 25px;
+    }
+    .hero h1 {
+      font-size: clamp(44px, 7.7vw, 70px);
+    }
+    .hero-aside {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+    }
+    .hero-aside p {
+      max-width: 420px;
+    }
+    .hero-aside .text-link {
+      max-width: 230px;
+      margin: 0;
+    }
+    .hero-heading {
+      padding-top: 40px;
+    }
+    .hero-meta {
+      margin-top: 28px;
+    }
+  }
+  @media (max-width: 550px) {
+    .hero-aside {
+      display: block;
+    }
+    .hero-aside p {
+      font-size: 12px;
+      max-width: 320px;
+    }
+    .hero-aside .text-link {
+      margin-top: 20px;
+      max-width: 220px;
+    }
+    .hero h1 {
+      font-size: 44px;
+    }
+    .hero-meta {
+      font-size: 7px;
+      letter-spacing: 0.06em;
+    }
+    .hero-meta a {
+      font-size: 9px;
+    }
+    .hero-image {
+      height: 385px;
+    }
+    .image-caption {
+      bottom: 48px;
+    }
+    .image-caption-label {
+      display: none;
+    }
+    .round-link {
+      width: 48px;
+      height: 48px;
+    }
+    .hero-eyebrow {
+      font-size: 8px;
+      margin-bottom: 22px;
+    }
+  }
+  @media (max-width: 550px) {
+    .hero-aside p {
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .hero-aside .text-link {
+      font-size: 12px;
+    }
+    .hero h1 {
+      letter-spacing: -0.055em;
+    }
+  }
 </style>

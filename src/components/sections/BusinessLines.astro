@@ -1,250 +1,334 @@
 ---
-import { getCategories } from '../../lib/queries';
-
+import { getCategories } from "../../lib/queries";
+import { imageUrl, sectorImage } from "../../lib/media";
+import Arrow from "../ui/Arrow.astro";
 const categories = await getCategories();
 ---
 
-<section class="business-lines" data-business-lines>
-	<div class="inner">
-		<h2>İş Kollarımız</h2>
-
-		<div class="layout">
-			<ul class="list">
-				{
-					categories.map((category, index) => (
-						<li>
-							<button
-								class:list={['item', { 'is-active': index === 0 }]}
-								type="button"
-								aria-current={index === 0 ? 'true' : undefined}
-								aria-controls={`business-line-${category.slug}`}
-								data-target={category.slug}
-							>
-								<span class="index">{String(index + 1).padStart(2, '0')}</span>
-								<span class="label">{category.title}</span>
-							</button>
-						</li>
-					))
-				}
-			</ul>
-
-			<div class="panels">
-				{
-					categories.map((category, index) => (
-						<article
-							class="panel"
-							id={`business-line-${category.slug}`}
-							data-slug={category.slug}
-							hidden={index === 0 ? undefined : true}
-						>
-							<div class="copy">
-								<p class="eyebrow">İş Kolu</p>
-								<h3>{category.title}</h3>
-								<p class="description">{category.description}</p>
-								<a class="cta" href={`/${category.slug}/`}>İncele</a>
-							</div>
-							<div class="visual" aria-hidden="true"></div>
-						</article>
-					))
-				}
-			</div>
-		</div>
-	</div>
+<section class="section business-lines" data-business-lines>
+  <div class="wrap">
+    <div class="section-top">
+      <p class="eyebrow">Uzmanlığımız</p>
+      <span class="section-index">02 / ÇALIŞMA ALANLARI</span>
+    </div>
+    <div class="business-heading" data-reveal>
+      <h2>
+        Farklı sahalar.
+        <br />
+        <span>Aynı titizlik.</span>
+      </h2>
+      <p>
+        İhtiyacın olduğu yerde, doğru bilgi ve uygulama deneyimiyle çözüm
+        üretiyoruz.
+      </p>
+    </div>
+    <div class="business-layout">
+      <div class="sector-tabs" role="tablist" aria-label="Çalışma alanları">
+        {categories.map((category, index) => (
+          <button
+            role="tab"
+            id={`tab-${category.slug}`}
+            aria-controls={`panel-${category.slug}`}
+            aria-selected={index === 0 ? "true" : "false"}
+            tabindex={index === 0 ? 0 : -1}
+            data-index={index}
+          >
+            <span class="tab-number">0{index + 1}</span>
+            <span>{category.title}</span>
+            <Arrow />
+          </button>
+        ))}
+      </div>
+      <div class="sector-panels">
+        {categories.map((category, index) => (
+          <article
+            role="tabpanel"
+            id={`panel-${category.slug}`}
+            aria-labelledby={`tab-${category.slug}`}
+            tabindex="0"
+            hidden={index !== 0}
+            class="sector-panel"
+          >
+            <div class="sector-description">
+              <p class="sector-label">PROJE & UYGULAMA</p>
+              <h3>{category.title}</h3>
+              <p>{category.description}</p>
+              <a href={`/${category.slug}/`} class="text-link">
+                Bu alanı keşfedin <Arrow />
+              </a>
+            </div>
+            <figure class="photo sector-photo">
+              <img
+                src={imageUrl(
+                  category.coverImage,
+                  1200,
+                  sectorImage(category.slug),
+                )}
+                alt={
+                  category.coverImage?.alt || `${category.title} çalışma alanı`
+                }
+                width="1200"
+                height="900"
+                loading="lazy"
+              />
+              {!category.coverImage?.asset && (
+                <span class="photo-credit">Temsili görsel</span>
+              )}
+            </figure>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
 </section>
-
 <style>
-	.business-lines {
-		background: var(--color-surface);
-	}
-
-	.inner {
-		max-width: var(--container);
-		margin-inline: auto;
-		padding: var(--space-7) var(--container-pad);
-	}
-
-	.layout {
-		display: grid;
-		gap: var(--space-6);
-		margin-top: var(--space-6);
-	}
-
-	.list {
-		display: flex;
-		gap: var(--space-2);
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		border-bottom: var(--border-hairline);
-	}
-
-	.list li {
-		flex: 1;
-	}
-
-	.item {
-		display: flex;
-		align-items: baseline;
-		gap: var(--space-2);
-		width: 100%;
-		padding: var(--space-3) 0;
-		background: none;
-		border: 0;
-		border-bottom: 2px solid transparent;
-		margin-bottom: -1px;
-		font-family: var(--font-display);
-		color: var(--color-steel);
-		text-align: left;
-		cursor: pointer;
-		transition:
-			color var(--transition),
-			border-color var(--transition);
-	}
-
-	.item .index {
-		font-size: var(--text-xs);
-		font-weight: var(--weight-bold);
-		letter-spacing: var(--tracking-wide);
-	}
-
-	.item .label {
-		font-size: var(--text-base);
-		font-weight: var(--weight-medium);
-	}
-
-	.item:hover {
-		color: var(--color-graphite);
-	}
-
-	.item.is-active {
-		color: var(--color-accent-strong);
-		border-bottom-color: var(--color-accent);
-	}
-
-	.panel {
-		display: grid;
-		gap: var(--space-5);
-	}
-
-	/* .panel'in kendi display:grid'i, [hidden]'ın varsayılan display:none'ını ezer — açıkça geri kazandırıyoruz */
-	.panel[hidden] {
-		display: none;
-	}
-
-	.eyebrow {
-		margin: 0 0 var(--space-2);
-		font-size: var(--text-xs);
-		font-weight: var(--weight-bold);
-		letter-spacing: var(--tracking-wide);
-		text-transform: uppercase;
-		color: var(--color-accent-strong);
-	}
-
-	.panel h3 {
-		margin: 0 0 var(--space-3);
-		font-size: var(--text-3xl);
-		line-height: var(--leading-tight);
-		letter-spacing: var(--tracking-tight);
-		color: var(--color-ink);
-	}
-
-	.description {
-		max-width: 46ch;
-		margin: 0 0 var(--space-5);
-		color: var(--color-steel);
-	}
-
-	.cta {
-		display: inline-block;
-		padding: var(--space-2) var(--space-5);
-		border: 1px solid var(--color-accent);
-		border-radius: var(--radius-sm);
-		color: var(--color-accent-strong);
-		font-size: var(--text-sm);
-		font-weight: var(--weight-medium);
-		letter-spacing: var(--tracking-wide);
-		text-transform: uppercase;
-		text-decoration: none;
-		transition:
-			background var(--transition),
-			color var(--transition);
-	}
-
-	.cta:hover {
-		background: var(--color-accent);
-		color: var(--color-on-accent);
-	}
-
-	.visual {
-		aspect-ratio: 4 / 3;
-		border-radius: var(--radius-md);
-		background: linear-gradient(135deg, var(--color-field), var(--color-steel));
-	}
-
-	.panel:nth-child(even) .visual {
-		background: linear-gradient(315deg, var(--color-steel), var(--color-field));
-	}
-
-	@media (min-width: 900px) {
-		.layout {
-			grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
-			gap: var(--space-7);
-			align-items: start;
-		}
-
-		.list {
-			display: block;
-			border-bottom: 0;
-			border-left: var(--border-hairline);
-		}
-
-		.item {
-			flex-direction: column;
-			gap: var(--space-1);
-			padding: var(--space-3) var(--space-4);
-			border-bottom: 0;
-			border-left: 2px solid transparent;
-			margin: 0 0 0 -1px;
-		}
-
-		.item.is-active {
-			border-left-color: var(--color-accent);
-		}
-
-		.item .label {
-			font-size: var(--text-lg);
-		}
-
-		.panel {
-			grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
-			gap: var(--space-6);
-			align-items: center;
-		}
-	}
+  .business-lines {
+    background: var(--color-ink);
+    color: var(--color-on-dark);
+    --color-line: #ffffff26;
+  }
+  .business-lines .eyebrow {
+    color: var(--color-on-dark);
+  }
+  .business-lines .eyebrow::before {
+    background: #d79f78;
+  }
+  .business-lines .section-index {
+    color: #aeb7ab;
+  }
+  .business-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    align-items: end;
+    margin-bottom: 64px;
+  }
+  .business-heading h2 span {
+    color: #a4b29e;
+  }
+  .business-heading > p {
+    max-width: 310px;
+    font-size: 12px;
+    line-height: 1.9;
+    color: #b5beb2;
+  }
+  .business-layout {
+    display: grid;
+    grid-template-columns: 230px minmax(0, 1fr);
+    gap: 45px;
+  }
+  .sector-tabs {
+    display: flex;
+    flex-direction: column;
+  }
+  .sector-tabs button {
+    background: none;
+    border: 0;
+    border-bottom: 1px solid var(--color-line);
+    padding: 24px 0;
+    display: flex;
+    align-items: center;
+    text-align: left;
+    gap: 16px;
+    color: #abb4a6;
+    font-size: 21px;
+    line-height: 1.2;
+  }
+  .sector-tabs button:first-child {
+    border-top: 1px solid var(--color-line);
+  }
+  .sector-tabs button[aria-selected="true"] {
+    color: white;
+  }
+  .tab-number {
+    font-size: 9px;
+    color: #b4bcad;
+  }
+  .sector-tabs :global(svg) {
+    width: 17px;
+    height: 17px;
+    margin-left: auto;
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: all 0.3s;
+  }
+  .sector-tabs button[aria-selected="true"] :global(svg) {
+    opacity: 1;
+    transform: none;
+    color: #deaa86;
+  }
+  .sector-panel {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 38px;
+    align-items: center;
+    animation: panel-in 0.55s var(--ease);
+  }
+  .sector-label {
+    font-size: 8px;
+    letter-spacing: 0.16em;
+    color: #d5a585;
+    margin-bottom: 22px;
+  }
+  .sector-description h3 {
+    font-size: 32px;
+  }
+  .sector-description > p:not(.sector-label) {
+    color: #b5beb2;
+    font-size: 12px;
+    line-height: 1.95;
+    margin-top: 22px;
+  }
+  .sector-description .text-link {
+    margin-top: 32px;
+    font-size: 10px;
+    width: 100%;
+  }
+  .sector-description .text-link:hover {
+    color: #deaa86;
+  }
+  .sector-photo {
+    height: 360px;
+  }
+  .sector-photo img {
+    transition: transform 1s var(--ease);
+  }
+  .sector-photo:hover img {
+    transform: scale(1.04);
+  }
+  @keyframes panel-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (max-width: 1100px) {
+    .business-layout {
+      grid-template-columns: 190px 1fr;
+      gap: 30px;
+    }
+    .sector-panel {
+      gap: 24px;
+      grid-template-columns: 1fr 1fr;
+    }
+    .sector-photo {
+      height: 340px;
+    }
+  }
+  @media (max-width: 850px) {
+    .business-heading {
+      margin-bottom: 35px;
+    }
+    .business-layout {
+      display: block;
+    }
+    .sector-tabs {
+      flex-direction: row;
+      gap: 25px;
+      overflow-x: auto;
+      margin-bottom: 35px;
+    }
+    .sector-tabs button {
+      flex-shrink: 0;
+      font-size: 20px;
+      padding: 18px 0;
+      gap: 10px;
+      border-top: 0 !important;
+    }
+    .sector-tabs :global(svg) {
+      display: none;
+    }
+    .sector-tabs button[aria-selected="true"] {
+      border-bottom-color: #d5a585;
+    }
+    .sector-panel {
+      grid-template-columns: 1fr 1.2fr;
+    }
+    .sector-description h3 {
+      font-size: 30px;
+    }
+  }
+  @media (max-width: 550px) {
+    .business-heading {
+      display: block;
+    }
+    .business-heading > p {
+      margin-top: 25px;
+    }
+    .sector-tabs {
+      gap: 22px;
+    }
+    .sector-tabs button {
+      font-size: 17px;
+    }
+    .tab-number {
+      font-size: 8px;
+    }
+    .sector-panel {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    .sector-photo {
+      height: 300px;
+    }
+    .sector-description .text-link {
+      width: auto;
+      gap: 40px;
+      margin-top: 22px;
+    }
+    .sector-description > p:not(.sector-label) {
+      max-width: 380px;
+    }
+    .sector-label {
+      margin-bottom: 15px;
+    }
+  }
+  @media (max-width: 700px) {
+    .business-heading > p,
+    .sector-description > p:not(.sector-label) {
+      font-size: 14px;
+    }
+    .sector-description .text-link {
+      font-size: 12px;
+    }
+  }
 </style>
-
 <script>
-	const section = document.querySelector('[data-business-lines]');
-
-	if (section) {
-		const items = section.querySelectorAll('.item');
-		const panels = section.querySelectorAll('.panel');
-
-		const setActive = (index) => {
-			items.forEach((item, i) => {
-				const active = i === index;
-				item.classList.toggle('is-active', active);
-				if (active) item.setAttribute('aria-current', 'true');
-				else item.removeAttribute('aria-current');
-			});
-
-			panels.forEach((panel, i) => {
-				panel.hidden = i !== index;
-			});
-		};
-
-		items.forEach((item, index) => {
-			item.addEventListener('click', () => setActive(index));
-		});
-	}
+  document
+    .querySelectorAll<HTMLElement>("[data-business-lines]")
+    .forEach((section) => {
+      const tabs = Array.from(
+        section.querySelectorAll<HTMLButtonElement>("[role=tab]"),
+      );
+      const panels = Array.from(
+        section.querySelectorAll<HTMLElement>("[role=tabpanel]"),
+      );
+      const select = (index: number, focus = false) => {
+        tabs.forEach((tab, i) => {
+          tab.setAttribute("aria-selected", String(i === index));
+          tab.tabIndex = i === index ? 0 : -1;
+        });
+        panels.forEach((panel, i) => (panel.hidden = i !== index));
+        if (focus) tabs[index].focus();
+      };
+      tabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => select(index));
+        tab.addEventListener("keydown", (event) => {
+          let next = index;
+          if (event.key === "ArrowRight" || event.key === "ArrowDown")
+            next = (index + 1) % tabs.length;
+          else if (event.key === "ArrowLeft" || event.key === "ArrowUp")
+            next = (index - 1 + tabs.length) % tabs.length;
+          else if (event.key === "Home") next = 0;
+          else if (event.key === "End") next = tabs.length - 1;
+          else return;
+          event.preventDefault();
+          select(next, true);
+        });
+      });
+    });
 </script>

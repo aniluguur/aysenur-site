@@ -9,3 +9,4 @@
 - [ ] Astro sürümü güncellenmeli (4.16 → 7.x) — `npm audit` kritik güvenlik açıkları buldu (RCE, XSS, auth bypass). Breaking change olabilir, dikkatli test gerekir.
 - [ ] Otomatik deploy (webhook) konusu — şu an Cloudflare Pages "Direct Upload" modunda, Sanity webhook'u otomatik rebuild tetikleyemiyor. Müşteri kendi başına içerik girmeye başlayınca çözülmeli (Git entegrasyonuna geçmek gibi).
 - [ ] Studio'ya müşteri erişimi — müşterinin kendi Sanity hesabıyla giriş yapıp içerik düzenleyebilmesi için projeye üye olarak eklenmesi gerekiyor
+- [ ] 404 sayfası yapılacak — Sanity'de proje/sektör silindiğinde otomatik yönlendirme olmuyor, kırık link yerine düzgün bir "sayfa bulunamadı" sayfası (Ana Sayfa/Sektörler linkleriyle) gösterilmeli

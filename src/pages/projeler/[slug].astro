@@ -1,249 +1,220 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getProjects } from '../../lib/queries';
-
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getProjects } from "../../lib/queries";
+import { imageUrl, projectImage, projectDate } from "../../lib/media";
+import ProjectDescription from "../../components/ui/ProjectDescription.astro";
+import ContactCta from "../../components/sections/ContactCta.astro";
+import ProjectCard from "../../components/projects/ProjectCard.astro";
+import Arrow from "../../components/ui/Arrow.astro";
 export async function getStaticPaths() {
-	const projects = await getProjects();
-	return projects.map((project) => ({
-		params: { slug: project.slug },
-		props: { project },
-	}));
+  const all = await getProjects();
+  return all.map((project) => ({
+    params: { slug: project.slug },
+    props: {
+      project,
+      related: all
+        .filter(
+          (p) =>
+            p.slug !== project.slug &&
+            p.category?.slug === project.category?.slug,
+        )
+        .slice(0, 2),
+    },
+  }));
 }
-
-const { project } = Astro.props;
-const category = project.category;
-
-const descriptionParagraphs = (project.description ?? [])
-	.map((block) => block.children?.map((span) => span.text).join('') ?? '')
-	.filter(Boolean);
-
-const TURKISH_MONTHS = [
-	'Ocak',
-	'Şubat',
-	'Mart',
-	'Nisan',
-	'Mayıs',
-	'Haziran',
-	'Temmuz',
-	'Ağustos',
-	'Eylül',
-	'Ekim',
-	'Kasım',
-	'Aralık',
-];
-
-const [year, month] = project.projectDate.split('-');
-const formattedDate = `${TURKISH_MONTHS[Number(month) - 1]} ${year}`;
-const meta = [project.location, formattedDate].filter(Boolean).join(' · ');
+const { project, related } = Astro.props;
+const date = projectDate(project.projectDate);
+const gallery = (project.gallery || []).filter((image) => image?.asset);
 ---
 
-<BaseLayout title={project.title}>
-	<div class="cover" aria-hidden="true"></div>
-
-	<section class="header">
-		<div class="inner">
-			<p class="category">{category?.title}</p>
-			<h1>{project.title}</h1>
-			<p class="meta">{meta}</p>
-		</div>
-	</section>
-
-	<section class="content">
-		<div class="inner">
-			<p class="lead">{project.shortDescription}</p>
-			{descriptionParagraphs.map((paragraph) => <p class="body">{paragraph}</p>)}
-
-			<h2>Teknik Bilgiler</h2>
-			<dl class="tech-list">
-				{
-					project.technicalInfo.map((info) => (
-						<div class="tech-row">
-							<dt>{info.label}</dt>
-							<dd>{info.value}</dd>
-						</div>
-					))
-				}
-			</dl>
-
-			<h2>Proje Görselleri</h2>
-			<div class="gallery">
-				<div class="gallery-item item-1" aria-hidden="true"></div>
-				<div class="gallery-item item-2" aria-hidden="true"></div>
-				<div class="gallery-item item-3" aria-hidden="true"></div>
-				<div class="gallery-item item-4" aria-hidden="true"></div>
-			</div>
-
-			<div class="actions">
-				<a class="back-link" href={`/${category?.slug}/`}>← {category?.title} listesine dön</a>
-				<a class="cta" href="/iletisim">İletişime Geç</a>
-			</div>
-		</div>
-	</section>
+<BaseLayout title={project.title} description={project.shortDescription}>
+  <section class="wrap page-intro">
+    <nav class="breadcrumb" aria-label="Sayfa yolu">
+      <a href="/">Ana sayfa</a>
+      <span>/</span>
+      <a href="/projeler">Projeler</a>
+      {project.category && (
+        <>
+          <span>/</span>
+          <a href={`/${project.category.slug}/`}>{project.category.title}</a>
+        </>
+      )}
+    </nav>
+    <p class="eyebrow">{project.category?.title || "Proje & uygulama"}</p>
+    <h1>{project.title}</h1>
+    <div class="project-meta">
+      {project.location && <span>{project.location}</span>}
+      {date && <span>{date}</span>}
+    </div>
+  </section>
+  <figure class="photo cover-wide">
+    <img
+      src={imageUrl(
+        project.coverImage,
+        2200,
+        projectImage(project.slug, project.category?.slug),
+      )}
+      alt={
+        project.coverImage?.alt ||
+        (project.coverImage?.asset
+          ? project.title
+          : "Çalışma alanını temsil eden görsel")
+      }
+      width="2200"
+      height="1400"
+      fetchpriority="high"
+    />
+    {!project.coverImage?.asset && (
+      <span class="photo-credit">
+        Temsili görsel — projeye ait fotoğraf henüz eklenmedi
+      </span>
+    )}
+  </figure>
+  <section class="section wrap project-body">
+    <aside>
+      <p class="eyebrow">Proje hakkında</p>
+      {project.technicalInfo?.length > 0 && (
+        <dl class="technical-info">
+          {project.technicalInfo.map((info) => (
+            <div>
+              <dt>{info.label}</dt>
+              <dd>{info.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+      <a href="/iletisim" class="text-link">
+        Benzer bir projeniz mi var? <Arrow />
+      </a>
+    </aside>
+    <div>
+      <p class="project-lead">{project.shortDescription}</p>
+      <ProjectDescription value={project.description} />
+    </div>
+  </section>
+  {gallery.length > 0 && (
+    <section class="wrap gallery-section">
+      <div class="section-top">
+        <p class="eyebrow">Sahadan detaylar</p>
+        <span class="section-index">PROJE GALERİSİ</span>
+      </div>
+      <div class="project-gallery">
+        {gallery.map((photo, index) => (
+          <figure class="photo" data-reveal>
+            <img
+              src={imageUrl(photo, 1400)}
+              alt={photo.alt || `${project.title} — ${index + 1}. görsel`}
+              width="1400"
+              height="1000"
+              loading="lazy"
+            />
+          </figure>
+        ))}
+      </div>
+    </section>
+  )}
+  {related.length > 0 && (
+    <section class="section wrap">
+      <div class="section-top">
+        <p class="eyebrow">Diğer çalışmalarımız</p>
+        <a class="text-link" href="/projeler">
+          Tüm projeler <Arrow />
+        </a>
+      </div>
+      <div class="project-grid">
+        {related.map((p, index) => (
+          <ProjectCard project={p} index={index} />
+        ))}
+      </div>
+    </section>
+  )}
+  <ContactCta />
 </BaseLayout>
-
 <style>
-	.cover {
-		aspect-ratio: 21 / 9;
-		background: linear-gradient(135deg, var(--color-field), var(--color-steel));
-	}
-
-	.header {
-		background: var(--color-ink);
-		color: var(--color-on-dark);
-	}
-
-	.header .inner {
-		max-width: var(--container);
-		margin-inline: auto;
-		padding: var(--space-6) var(--container-pad);
-	}
-
-	.category {
-		margin: 0 0 var(--space-2);
-		font-size: var(--text-sm);
-		font-weight: var(--weight-bold);
-		letter-spacing: var(--tracking-wide);
-		text-transform: uppercase;
-		color: var(--color-harvest);
-	}
-
-	.header h1 {
-		max-width: 24ch;
-		color: var(--color-on-dark);
-	}
-
-	.meta {
-		margin: 0;
-		font-size: var(--text-sm);
-		color: var(--color-steel-light);
-	}
-
-	.content .inner {
-		max-width: var(--container);
-		margin-inline: auto;
-		padding: var(--space-7) var(--container-pad);
-	}
-
-	.lead {
-		max-width: 60ch;
-		font-size: var(--text-lg);
-		color: var(--color-graphite);
-	}
-
-	.body {
-		max-width: 60ch;
-		color: var(--color-steel);
-	}
-
-	.content h2 {
-		margin-top: var(--space-7);
-	}
-
-	.tech-list {
-		display: grid;
-		gap: var(--space-3);
-		margin: 0;
-		max-width: 60ch;
-	}
-
-	.tech-row {
-		display: flex;
-		justify-content: space-between;
-		gap: var(--space-4);
-		padding: var(--space-3) 0;
-		border-bottom: var(--border-hairline);
-	}
-
-	.tech-row dt {
-		font-weight: var(--weight-medium);
-		color: var(--color-ink);
-	}
-
-	.tech-row dd {
-		margin: 0;
-		color: var(--color-steel);
-		text-align: right;
-	}
-
-	.gallery {
-		display: grid;
-		gap: var(--space-4);
-		grid-template-columns: repeat(2, 1fr);
-	}
-
-	.gallery-item {
-		aspect-ratio: 4 / 3;
-		border-radius: var(--radius-md);
-	}
-
-	.item-1 {
-		background: linear-gradient(135deg, var(--color-field), var(--color-steel));
-	}
-
-	.item-2 {
-		background: linear-gradient(315deg, var(--color-harvest), var(--color-accent));
-	}
-
-	.item-3 {
-		background: linear-gradient(45deg, var(--color-accent-strong), var(--color-field));
-	}
-
-	.item-4 {
-		background: linear-gradient(225deg, var(--color-steel), var(--color-accent-strong));
-	}
-
-	.actions {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: var(--space-4);
-		margin-top: var(--space-7);
-		padding-top: var(--space-5);
-		border-top: var(--border-hairline);
-	}
-
-	.back-link {
-		font-size: var(--text-sm);
-		font-weight: var(--weight-medium);
-		color: var(--color-accent-strong);
-		text-decoration: none;
-	}
-
-	.back-link:hover {
-		text-decoration: underline;
-	}
-
-	.cta {
-		display: inline-block;
-		padding: var(--space-3) var(--space-6);
-		background: var(--color-accent);
-		color: var(--color-on-accent);
-		font-weight: var(--weight-medium);
-		font-size: var(--text-sm);
-		letter-spacing: var(--tracking-wide);
-		text-transform: uppercase;
-		text-decoration: none;
-		border-radius: var(--radius-sm);
-		transition: background var(--transition);
-	}
-
-	.cta:hover {
-		background: var(--color-accent-strong);
-	}
-
-	@media (min-width: 900px) {
-		.header .inner {
-			padding-block: var(--space-7);
-		}
-
-		.gallery {
-			grid-template-columns: repeat(4, 1fr);
-		}
-
-		.actions {
-			flex-direction: row;
-			align-items: center;
-			justify-content: space-between;
-		}
-	}
+  .project-meta {
+    display: flex;
+    gap: 30px;
+    font-size: 12px;
+    color: var(--color-steel);
+    margin-top: 35px;
+  }
+  .project-meta span + span {
+    border-left: 1px solid var(--color-line);
+    padding-left: 30px;
+  }
+  .project-body {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 100px;
+  }
+  .technical-info {
+    margin-top: 35px;
+  }
+  .technical-info > div {
+    border-top: 1px solid var(--color-line);
+    padding-block: 16px;
+  }
+  .technical-info dt {
+    font-size: 9px;
+    color: var(--color-steel);
+    margin-bottom: 7px;
+  }
+  .technical-info dd {
+    font-size: 13px;
+    margin: 0;
+  }
+  .project-body aside > .text-link {
+    font-size: 10px;
+    margin-top: 20px;
+  }
+  .project-lead {
+    font-size: 25px;
+    line-height: 1.5;
+    letter-spacing: -0.035em;
+    color: var(--color-ink);
+    margin-bottom: 35px;
+  }
+  .project-gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .project-gallery > .photo {
+    aspect-ratio: 1.35;
+  }
+  .project-gallery > .photo:first-child:nth-last-child(odd) {
+    grid-column: 1/-1;
+    aspect-ratio: 2;
+  }
+  .gallery-section {
+    padding-bottom: 70px;
+  }
+  @media (max-width: 850px) {
+    .project-body {
+      grid-template-columns: 1fr;
+      gap: 50px;
+    }
+    .project-body aside {
+      order: 2;
+    }
+    .technical-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 25px;
+    }
+    .project-lead {
+      font-size: 22px;
+    }
+  }
+  @media (max-width: 550px) {
+    .project-gallery {
+      grid-template-columns: 1fr;
+    }
+    .project-gallery > .photo:first-child:nth-last-child(odd) {
+      aspect-ratio: 1.35;
+    }
+    .project-meta {
+      font-size: 10px;
+    }
+  }
 </style>

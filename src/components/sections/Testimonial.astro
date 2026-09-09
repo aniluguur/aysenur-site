@@ -1,52 +1,60 @@
 ---
-import { getHomePage } from '../../lib/queries';
-
-const homePage = await getHomePage();
-const quote = homePage?.testimonialQuote ?? '';
-const authorName = homePage?.testimonialAuthorName ?? '';
-const authorCompany = homePage?.testimonialAuthorCompany ?? '';
+import { getHomePage } from "../../lib/queries";
+import { hasContent } from "../../lib/media";
+const home = await getHomePage();
+const valid =
+  hasContent(home?.testimonialAuthorName) && hasContent(home?.testimonialQuote);
 ---
 
-<section class="testimonial">
-	<div class="inner">
-		<blockquote class="card">
-			<p class="quote">"{quote}"</p>
-			<footer class="attribution">{authorName}, {authorCompany}</footer>
-		</blockquote>
-	</div>
-</section>
-
+{valid && (
+  <section class="testimonial section">
+    <div class="wrap">
+      <p class="eyebrow">Birlikte başardık</p>
+      <blockquote data-reveal>
+        <span class="quote-mark" aria-hidden="true">
+          “
+        </span>
+        <p>{home?.testimonialQuote}</p>
+        <footer>
+          {home?.testimonialAuthorName}
+          <span>
+            {hasContent(home?.testimonialAuthorCompany)
+              ? home?.testimonialAuthorCompany
+              : ""}
+          </span>
+        </footer>
+      </blockquote>
+    </div>
+  </section>
+)}
 <style>
-	.testimonial {
-		background: var(--color-surface);
-	}
-
-	.inner {
-		max-width: var(--container);
-		margin-inline: auto;
-		padding: var(--space-7) var(--container-pad);
-	}
-
-	.card {
-		max-width: 60ch;
-		margin: 0 auto;
-		padding: var(--space-6);
-		background: var(--color-surface-alt);
-		border: var(--border-hairline);
-		border-radius: var(--radius-md);
-		text-align: center;
-	}
-
-	.quote {
-		margin: 0 0 var(--space-3);
-		font-size: var(--text-lg);
-		font-style: italic;
-		color: var(--color-graphite);
-	}
-
-	.attribution {
-		font-size: var(--text-sm);
-		font-weight: var(--weight-medium);
-		color: var(--color-steel);
-	}
+  .testimonial {
+    background: var(--color-surface-alt);
+  }
+  blockquote {
+    margin: 35px auto 0;
+    max-width: 850px;
+    text-align: center;
+  }
+  .quote-mark {
+    font-size: 100px;
+    color: var(--color-accent);
+    line-height: 1;
+  }
+  blockquote > p {
+    font-size: clamp(25px, 3vw, 42px);
+    color: var(--color-ink);
+    letter-spacing: -0.04em;
+    line-height: 1.4;
+  }
+  blockquote footer {
+    font-size: 12px;
+    margin-top: 30px;
+  }
+  blockquote footer span {
+    display: block;
+    color: var(--color-steel);
+    font-size: 10px;
+    margin-top: 5px;
+  }
 </style>

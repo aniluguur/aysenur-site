@@ -1,52 +1,152 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import ProjectCard from '../../components/projects/ProjectCard.astro';
-import { getProjects } from '../../lib/queries';
-
-const projects = await getProjects();
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getProjects, getCategories } from "../../lib/queries";
+import ProjectCard from "../../components/projects/ProjectCard.astro";
+import ContactCta from "../../components/sections/ContactCta.astro";
+const [projects, categories] = await Promise.all([
+  getProjects(),
+  getCategories(),
+]);
 ---
-<BaseLayout title="Projelerimiz">
-	<section class="projects">
-		<div class="inner">
-			<p class="eyebrow">Sahada Tamamladıklarımız</p>
-			<h1>Projelerimiz</h1>
-			<p class="lead">Tüm iş kollarımızda tamamladığımız projelerin genel listesi.</p>
-			<div class="grid">
-				{projects.map((project) => <ProjectCard project={project} />)}
-			</div>
-		</div>
-	</section>
+
+<BaseLayout title="Projeler — Sahada Hayata Geçirdiklerimiz">
+  <section class="page-intro wrap">
+    <p class="eyebrow">Proje seçkisi</p>
+    <h1>
+      Planladık. Uyguladık.
+      <br />
+      <span class="muted">Birlikte tamamladık.</span>
+    </h1>
+    <p class="lead">
+      Farklı ihtiyaçlar, farklı sahalar. Her birinde aynı uygulama disiplini.
+    </p>
+  </section>
+  <section class="wrap project-list" data-project-list>
+    <div class="filter-row">
+      <div class="filters" aria-label="Projeleri sektöre göre filtrele" hidden>
+        <button data-filter="all" aria-pressed="true">
+          Tüm projeler <span>{projects.length}</span>
+        </button>
+        {categories.map((category) => (
+          <button data-filter={category.slug} aria-pressed="false">
+            {category.title}
+            <span>
+              {
+                projects.filter(
+                  (project) => project.category?.slug === category.slug,
+                ).length
+              }
+            </span>
+          </button>
+        ))}
+      </div>
+      <p class="results" aria-live="polite" data-results>
+        {projects.length} proje
+      </p>
+    </div>
+    <div class="project-grid">
+      {projects.map((project, index) => (
+        <div data-project data-category={project.category?.slug || ""}>
+          <ProjectCard project={project} index={index} />
+        </div>
+      ))}
+    </div>
+    <p class="empty-state" data-empty hidden={projects.length > 0}>
+      Bu alandaki projelerimizi yakında paylaşacağız.
+    </p>
+  </section>
+  <ContactCta />
 </BaseLayout>
-
 <style>
-	.projects {
-		background: var(--color-surface-alt);
-	}
-
-	.inner {
-		max-width: var(--container);
-		margin-inline: auto;
-		padding: var(--space-7) var(--container-pad);
-	}
-
-	.eyebrow {
-		margin: 0 0 var(--space-2);
-		font-size: var(--text-sm);
-		font-weight: var(--weight-bold);
-		letter-spacing: var(--tracking-wide);
-		text-transform: uppercase;
-		color: var(--color-accent-strong);
-	}
-
-	.lead {
-		max-width: 60ch;
-		color: var(--color-steel);
-	}
-
-	.grid {
-		display: grid;
-		gap: var(--space-5);
-		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-		margin-top: var(--space-6);
-	}
+  .project-list {
+    padding-bottom: var(--section-space);
+  }
+  .filter-row {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--color-line);
+    padding: 22px 0 46px;
+  }
+  .filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .filters button {
+    border: 1px solid var(--color-line);
+    background: transparent;
+    padding: 11px 18px;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .filters button[aria-pressed="true"] {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    color: white;
+  }
+  .filters span {
+    font-size: 8px;
+    opacity: 0.6;
+  }
+  .results {
+    font-size: 10px;
+    white-space: nowrap;
+  }
+  .project-grid > [data-project]:nth-child(even) {
+    padding-top: 70px;
+  }
+  @media (max-width: 700px) {
+    .filter-row {
+      display: block;
+      padding-bottom: 30px;
+    }
+    .results {
+      margin-top: 20px;
+    }
+    .filters {
+      gap: 8px;
+    }
+    .filters button {
+      padding: 10px 12px;
+      gap: 12px;
+    }
+    .project-grid > [data-project]:nth-child(even) {
+      padding-top: 0;
+    }
+  }
 </style>
+<script>
+  const root = document.querySelector<HTMLElement>("[data-project-list]");
+  if (root) {
+    const filters = root.querySelector<HTMLElement>(".filters")!;
+    filters.hidden = false;
+    const buttons = Array.from(
+      filters.querySelectorAll<HTMLButtonElement>("[data-filter]"),
+    );
+    const projects = Array.from(
+      root.querySelectorAll<HTMLElement>("[data-project]"),
+    );
+    const result = root.querySelector<HTMLElement>("[data-results]")!;
+    const empty = root.querySelector<HTMLElement>("[data-empty]")!;
+    buttons.forEach((button) =>
+      button.addEventListener("click", () => {
+        const category = button.dataset.filter;
+        let count = 0;
+        buttons.forEach((b) =>
+          b.setAttribute("aria-pressed", String(b === button)),
+        );
+        projects.forEach((project) => {
+          project.hidden =
+            category !== "all" && project.dataset.category !== category;
+          if (!project.hidden) count++;
+        });
+        result.textContent = `${count} proje`;
+        empty.hidden = count > 0;
+      }),
+    );
+  }
+</script>

@@ -1,186 +1,334 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { getContactPage } from '../lib/queries';
-
-const contactPage = await getContactPage();
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getContactPage } from "../lib/queries";
+import { hasContent } from "../lib/media";
+import Arrow from "../components/ui/Arrow.astro";
+const contact = await getContactPage();
+const email =
+  hasContent(contact?.email) &&
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact?.email || "")
+    ? contact!.email
+    : "";
+const phone = hasContent(contact?.phone) ? contact!.phone : "";
+const address = hasContent(contact?.address) ? contact!.address : "";
 ---
 
-<BaseLayout title="İletişim">
-	<section class="hero">
-		<div class="inner">
-			<p class="eyebrow">{contactPage?.heroEyebrow ?? ''}</p>
-			<h1>{contactPage?.heroTitle ?? ''}</h1>
-			<p class="lead">{contactPage?.heroDescription ?? ''}</p>
-		</div>
-	</section>
-
-	<section class="contact">
-		<div class="inner">
-			<div class="info">
-				<h2>İletişim Bilgileri</h2>
-
-				<div class="info-block">
-					<h3>Adres</h3>
-					<p>{contactPage?.address ?? ''}</p>
-				</div>
-
-				<div class="info-block">
-					<h3>Telefon</h3>
-					<p>{contactPage?.phone ?? ''}</p>
-				</div>
-
-				<div class="info-block">
-					<h3>E-posta</h3>
-					<p>{contactPage?.email ?? ''}</p>
-				</div>
-			</div>
-
-			<!-- Backend henüz karara bağlanmadı: ileride Cloudflare Pages Function + e-posta servisi (Resend vb.) ile bağlanacak -->
-			<form class="form">
-				<h2>Mesaj Gönderin</h2>
-
-				<label for="name">Ad Soyad</label>
-				<input type="text" id="name" name="name" required />
-
-				<label for="email">E-posta</label>
-				<input type="email" id="email" name="email" required />
-
-				<label for="phone">Telefon <span class="optional">(opsiyonel)</span></label>
-				<input type="tel" id="phone" name="phone" />
-
-				<label for="message">Mesaj</label>
-				<textarea id="message" name="message" rows="5" required></textarea>
-
-				<button type="submit">Gönder</button>
-			</form>
-		</div>
-	</section>
+<BaseLayout
+  title="İletişim — Birlikte Çalışalım"
+  description={contact?.heroDescription}
+>
+  <section class="page-intro wrap">
+    <p class="eyebrow">{contact?.heroEyebrow || "İletişim"}</p>
+    <h1>
+      {contact?.heroTitle || "Bize ulaşın"}
+      <span class="accent">.</span>
+      <br />
+      <span class="muted">İyi işler bir konuşmayla başlar.</span>
+    </h1>
+    <p class="lead">{contact?.heroDescription}</p>
+  </section>
+  <section class="wrap contact-layout">
+    <div class="contact-details">
+      <p class="eyebrow">İletişimde kalalım</p>
+      <div class="contact-item">
+        <span>01 / E-POSTA</span>
+        {email ? (
+          <a href={`mailto:${email}`}>
+            {email}
+            <Arrow />
+          </a>
+        ) : (
+          <p>Yakında paylaşılacak</p>
+        )}
+      </div>
+      <div class="contact-item">
+        <span>02 / TELEFON</span>
+        {phone ? (
+          <a href={`tel:${phone.replace(/[^+\d]/g, "")}`}>
+            {phone}
+            <Arrow />
+          </a>
+        ) : (
+          <p>Yakında paylaşılacak</p>
+        )}
+      </div>
+      <div class="contact-item">
+        <span>03 / ADRES</span>
+        <p>{address || "Yakında paylaşılacak"}</p>
+      </div>
+      <figure class="photo contact-photo">
+        <img
+          src="/images/planning.jpg"
+          width="1200"
+          height="800"
+          alt="Aydınlık bir proje çalışma alanı"
+          loading="lazy"
+        />
+        <span class="photo-credit">Temsili görsel</span>
+      </figure>
+    </div>
+    <div class="form-panel">
+      <p class="eyebrow">Projenizi anlatın</p>
+      <h2>Neler yapabiliriz?</h2>
+      <p class="form-intro">
+        Kısaca ihtiyacınızı paylaşın. Birlikte atacağımız ilk adımı konuşalım.
+      </p>
+      <form data-contact-form data-email={email}>
+        <div class="field-row">
+          <div class="field">
+            <label for="name">
+              Adınız soyadınız <span>*</span>
+            </label>
+            <input
+              id="name"
+              name="name"
+              autocomplete="name"
+              required
+              maxlength="120"
+              placeholder="Ad Soyad"
+            />
+          </div>
+          <div class="field">
+            <label for="company">Firma adı</label>
+            <input
+              id="company"
+              name="company"
+              autocomplete="organization"
+              maxlength="160"
+              placeholder="Firmanız"
+            />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="email">
+              E-posta adresiniz <span>*</span>
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+              maxlength="180"
+              placeholder="ornek@firma.com"
+            />
+          </div>
+          <div class="field">
+            <label for="phone">Telefon numaranız</label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              autocomplete="tel"
+              maxlength="40"
+              placeholder="+90"
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label for="message">
+            Projeniz hakkında <span>*</span>
+          </label>
+          <textarea
+            id="message"
+            name="message"
+            rows="4"
+            required
+            maxlength="3000"
+            placeholder="İhtiyacınızı, proje yerini ve aklınızdaki takvimi paylaşabilirsiniz."
+          ></textarea>
+        </div>
+        {email ? (
+          <p class="form-note">
+            Bu form, mesajınızı göndermek için e-posta uygulamanızda bir taslak
+            açar.
+          </p>
+        ) : (
+          <p class="form-note" id="contact-availability">
+            İletişim bilgilerimiz güncelleniyor. Mesaj gönderimi yakında
+            açılacak.
+          </p>
+        )}
+        <button
+          class="button"
+          type="submit"
+          disabled={!email}
+          aria-describedby={!email ? "contact-availability" : undefined}
+        >
+          E-posta taslağı oluştur <Arrow />
+        </button>
+        <p class="form-status" data-form-status role="status"></p>
+      </form>
+    </div>
+  </section>
 </BaseLayout>
-
 <style>
-	.hero {
-		background: var(--color-ink);
-		color: var(--color-on-dark);
-	}
-
-	.hero .inner {
-		max-width: var(--container);
-		margin-inline: auto;
-		padding: var(--space-8) var(--container-pad);
-	}
-
-	.eyebrow {
-		margin: 0 0 var(--space-3);
-		font-size: var(--text-sm);
-		font-weight: var(--weight-bold);
-		letter-spacing: var(--tracking-wide);
-		text-transform: uppercase;
-		color: var(--color-harvest);
-	}
-
-	.hero h1 {
-		color: var(--color-on-dark);
-	}
-
-	.hero .lead {
-		max-width: 48ch;
-		font-size: var(--text-lg);
-		color: var(--color-steel-light);
-	}
-
-	@media (min-width: 900px) {
-		.hero .inner {
-			padding-block: var(--space-9);
-		}
-	}
-
-	.contact .inner {
-		max-width: var(--container);
-		margin-inline: auto;
-		padding: var(--space-7) var(--container-pad);
-		display: grid;
-		gap: var(--space-7);
-	}
-
-	.info-block {
-		margin-bottom: var(--space-5);
-	}
-
-	.info-block h3 {
-		margin: 0 0 var(--space-1);
-		font-size: var(--text-base);
-		color: var(--color-ink);
-	}
-
-	.info-block p {
-		margin: 0;
-		color: var(--color-steel);
-	}
-
-	.form {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.form label {
-		margin-bottom: var(--space-2);
-		font-size: var(--text-sm);
-		font-weight: var(--weight-medium);
-		color: var(--color-ink);
-	}
-
-	.optional {
-		font-weight: var(--weight-regular);
-		color: var(--color-steel);
-	}
-
-	.form input,
-	.form textarea {
-		width: 100%;
-		margin-bottom: var(--space-4);
-		padding: var(--space-3);
-		font-family: var(--font-sans);
-		font-size: var(--text-base);
-		color: var(--color-ink);
-		background: var(--color-surface);
-		border: var(--border-hairline);
-		border-radius: var(--radius-sm);
-	}
-
-	.form textarea {
-		resize: vertical;
-	}
-
-	.form input:focus,
-	.form textarea:focus {
-		outline: 2px solid var(--color-accent);
-		outline-offset: 1px;
-		border-color: var(--color-accent);
-	}
-
-	.form button {
-		align-self: flex-start;
-		padding: var(--space-3) var(--space-6);
-		background: var(--color-accent);
-		color: var(--color-on-accent);
-		font-weight: var(--weight-medium);
-		font-size: var(--text-sm);
-		letter-spacing: var(--tracking-wide);
-		text-transform: uppercase;
-		border: none;
-		border-radius: var(--radius-sm);
-		cursor: pointer;
-		transition: background var(--transition);
-	}
-
-	.form button:hover {
-		background: var(--color-accent-strong);
-	}
-
-	@media (min-width: 900px) {
-		.contact .inner {
-			grid-template-columns: 1fr 1.4fr;
-			align-items: start;
-		}
-	}
+  .contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.35fr;
+    gap: 95px;
+    padding-bottom: var(--section-space);
+  }
+  .contact-details > .eyebrow {
+    margin-bottom: 35px;
+  }
+  .contact-item {
+    padding: 24px 0;
+    border-top: 1px solid var(--color-line);
+  }
+  .contact-item > span {
+    font-size: 8px;
+    letter-spacing: 0.13em;
+    color: var(--color-steel);
+  }
+  .contact-item > a,
+  .contact-item > p {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    font-size: 16px;
+    line-height: 1.5;
+    margin-top: 12px;
+    overflow-wrap: anywhere;
+  }
+  .contact-item > a:hover {
+    color: var(--color-accent);
+  }
+  .contact-item :global(svg) {
+    flex-shrink: 0;
+    width: 18px;
+  }
+  .contact-photo {
+    height: 230px;
+    margin-top: 25px;
+  }
+  .form-panel {
+    padding: 40px;
+    background: var(--color-surface-alt);
+  }
+  .form-panel h2 {
+    font-size: 40px;
+    margin-top: 28px;
+  }
+  .form-intro {
+    font-size: 12px;
+    margin-top: 20px;
+    max-width: 350px;
+  }
+  .form-panel form {
+    margin-top: 40px;
+  }
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+  }
+  .field {
+    margin-bottom: 28px;
+  }
+  .field label {
+    display: block;
+    font-size: 10px;
+    margin-bottom: 11px;
+  }
+  .field label span {
+    color: var(--color-accent);
+  }
+  .field input,
+  .field textarea {
+    width: 100%;
+    padding: 13px 0;
+    border: 0;
+    border-bottom: 1px solid #b8beb0;
+    background: transparent;
+    color: var(--color-ink);
+    border-radius: 0;
+    font-size: 12px;
+    outline-offset: 4px;
+  }
+  .field textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: #71796b;
+    font-size: 11px;
+  }
+  .form-note {
+    font-size: 10px;
+    margin-bottom: 25px;
+    line-height: 1.8;
+  }
+  .form-panel .button {
+    width: 100%;
+  }
+  .form-panel .button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .form-status {
+    font-size: 11px;
+    margin-top: 15px;
+  }
+  @media (max-width: 1000px) {
+    .contact-layout {
+      gap: 40px;
+    }
+    .form-panel {
+      padding: 30px;
+    }
+    .field-row {
+      gap: 20px;
+    }
+  }
+  @media (max-width: 750px) {
+    .contact-layout {
+      grid-template-columns: 1fr;
+      gap: 45px;
+    }
+    .form-panel {
+      padding: 30px 22px;
+    }
+    .form-panel h2 {
+      font-size: 35px;
+    }
+  }
+  @media (max-width: 400px) {
+    .field-row {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+  }
+  @media (max-width: 750px) {
+    .field input,
+    .field textarea {
+      font-size: 16px;
+    }
+    .field label {
+      font-size: 12px;
+    }
+    .form-intro {
+      font-size: 14px;
+    }
+    .form-note {
+      font-size: 12px;
+    }
+  }
 </style>
+<script>
+  const form = document.querySelector<HTMLFormElement>("[data-contact-form]");
+  form?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const email = form.dataset.email;
+    if (!email) return;
+    const data = new FormData(form);
+    const subject = `Proje görüşmesi — ${data.get("name")}`;
+    const body = `Ad Soyad: ${data.get("name")}\nFirma: ${data.get("company")}\nE-posta: ${data.get("email")}\nTelefon: ${data.get("phone")}\n\n${data.get("message")}`;
+    window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    form.querySelector<HTMLElement>("[data-form-status]")!.textContent =
+      "E-posta uygulamanızda açılan taslağı kontrol edip gönderebilirsiniz.";
+  });
+</script>
