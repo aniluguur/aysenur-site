@@ -1,56 +1,24 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getAboutPage } from '../lib/queries';
 
-const values = [
-	{
-		title: 'Şeffaflık',
-		description: 'Kapsam, süre ve maliyeti proje başında netleştirir, süreç boyunca açık iletişim kurarız.',
-	},
-	{
-		title: 'Yerel Bilgi',
-		description: 'Sahada çalıştığımız bölgelerin koşullarını tanır, çözümlerimizi buna göre şekillendiririz.',
-	},
-	{
-		title: 'Sürdürülebilirlik',
-		description: 'Kaynakları verimli kullanan, uzun ömürlü sistemler kurmayı önceliklendiririz.',
-	},
-	{
-		title: 'Esnek Ekip',
-		description: 'Mekanik ve tarım alanındaki farklı ölçekteki işlere aynı titizlikle yaklaşırız.',
-	},
-];
+const aboutPage = await getAboutPage();
+const storyParagraphs = aboutPage?.storyParagraphs ?? [];
+const values = aboutPage?.values ?? [];
 ---
 
 <BaseLayout title="Hakkımızda">
 	<section class="hero">
 		<div class="inner">
-			<p class="eyebrow">Biz Kimiz</p>
-			<h1>Sahada bulunmayı, işi bilmenin ilk şartı sayıyoruz.</h1>
-			<p class="lead">
-				Mekanik tesisat ve tarımsal altyapı işlerinde, planlamadan teslim sonrasına kadar müşterimizin
-				yanında yer alan bir ekibiz.
-			</p>
+			<p class="eyebrow">{aboutPage?.heroEyebrow ?? ''}</p>
+			<h1>{aboutPage?.heroTitle ?? ''}</h1>
+			<p class="lead">{aboutPage?.heroDescription ?? ''}</p>
 		</div>
 	</section>
 
 	<section class="story">
 		<div class="inner">
-			<p>
-				Yıllardır mekanik ve tarım sektöründe farklı ölçeklerde projeler yürütüyoruz. Bu süreçte
-				öğrendiğimiz en önemli şey, her sahanın kendine has koşulları olduğu ve genel geçer
-				çözümlerin yerinde çalışmadığı. Bu yüzden her işe, o projenin gerçek ihtiyaçlarını anlayarak
-				başlıyoruz.
-			</p>
-			<p>
-				Deneyimli ekibimiz, imalat ve montajdan sulama sistemlerine, ekipman bakımından devreye
-				almaya kadar geniş bir yelpazede çalışıyor. Bu çeşitlilik bize, bir sektörde edindiğimiz
-				disiplini diğerine taşıma imkanı veriyor.
-			</p>
-			<p>
-				Müşterilerimizle kurduğumuz ilişkiyi tek seferlik bir iş olarak değil, uzun vadeli bir
-				ortaklık olarak görüyoruz. Teslimden sonra da ulaşılabilir olmaya, ihtiyaç duyulduğunda
-				destek vermeye önem veriyoruz.
-			</p>
+			{storyParagraphs.map((paragraph) => <p>{paragraph}</p>)}
 		</div>
 	</section>
 

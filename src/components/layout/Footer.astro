@@ -1,17 +1,18 @@
 ---
+import { getSiteSettings } from '../../lib/queries';
+
 const year = new Date().getFullYear();
-const socialLinks = [
-	{ label: 'LinkedIn', href: '#' },
-	{ label: 'Instagram', href: '#' },
-	{ label: 'YouTube', href: '#' },
-];
+const siteSettings = await getSiteSettings();
+const companyName = siteSettings?.companyName ?? 'Şirket Adı';
+const footerTagline = siteSettings?.footerTagline ?? '';
+const socialLinks = siteSettings?.socialLinks ?? [];
 ---
 
 <footer class="footer">
 	<div class="inner">
 		<div class="brand-block">
-			<p class="brand">Şirket Adı</p>
-			<p class="tagline">Mekanik ve tarım alanında proje ve uygulama çözümleri.</p>
+			<p class="brand">{companyName}</p>
+			<p class="tagline">{footerTagline}</p>
 		</div>
 
 		<nav class="social" aria-label="Sosyal medya">
@@ -20,7 +21,7 @@ const socialLinks = [
 				{
 					socialLinks.map((link) => (
 						<li>
-							<a href={link.href}>{link.label}</a>
+							<a href={link.url}>{link.label}</a>
 						</li>
 					))
 				}
@@ -29,7 +30,7 @@ const socialLinks = [
 	</div>
 
 	<div class="bottom">
-		<p>&copy; {year} Şirket Adı. Tüm hakları saklıdır.</p>
+		<p>&copy; {year} {companyName}. Tüm hakları saklıdır.</p>
 	</div>
 </footer>
 

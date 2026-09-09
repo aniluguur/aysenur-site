@@ -1,5 +1,6 @@
 ---
-const { project, categoryTitle } = Astro.props;
+const { project } = Astro.props;
+const categoryTitle = project.category?.title ?? '';
 
 const TURKISH_MONTHS = [
 	'Ocak',

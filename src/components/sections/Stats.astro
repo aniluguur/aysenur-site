@@ -1,10 +1,8 @@
 ---
-const stats = [
-	{ value: '[XX]', label: 'Yıllık Deneyim' },
-	{ value: '[XX]+', label: 'Tamamlanan Proje' },
-	{ value: '[XX]+', label: 'Kurumsal Referans' },
-	{ value: '[XXXX]', label: 'Kuruluş Yılı' },
-];
+import { getHomePage } from '../../lib/queries';
+
+const homePage = await getHomePage();
+const stats = homePage?.stats ?? [];
 ---
 
 <section class="stats">

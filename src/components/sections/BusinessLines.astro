@@ -1,7 +1,7 @@
 ---
-import { mockCategories } from '../../lib/mockCategories.js';
+import { getCategories } from '../../lib/queries';
 
-const categories = [...mockCategories].sort((a, b) => a.order - b.order);
+const categories = await getCategories();
 ---
 
 <section class="business-lines" data-business-lines>

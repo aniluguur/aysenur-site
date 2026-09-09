@@ -1,17 +1,21 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { mockProjects } from '../../lib/mockProjects.js';
-import { mockCategories } from '../../lib/mockCategories.js';
+import { getProjects } from '../../lib/queries';
 
-export function getStaticPaths() {
-	return mockProjects.map((p) => ({
-		params: { slug: p.slug },
-		props: { project: p },
+export async function getStaticPaths() {
+	const projects = await getProjects();
+	return projects.map((project) => ({
+		params: { slug: project.slug },
+		props: { project },
 	}));
 }
 
 const { project } = Astro.props;
-const category = mockCategories.find((c) => c.slug === project.category);
+const category = project.category;
+
+const descriptionParagraphs = (project.description ?? [])
+	.map((block) => block.children?.map((span) => span.text).join('') ?? '')
+	.filter(Boolean);
 
 const TURKISH_MONTHS = [
 	'Ocak',
@@ -47,7 +51,7 @@ const meta = [project.location, formattedDate].filter(Boolean).join(' · ');
 	<section class="content">
 		<div class="inner">
 			<p class="lead">{project.shortDescription}</p>
-			<p class="body">{project.description}</p>
+			{descriptionParagraphs.map((paragraph) => <p class="body">{paragraph}</p>)}
 
 			<h2>Teknik Bilgiler</h2>
 			<dl class="tech-list">
@@ -70,7 +74,7 @@ const meta = [project.location, formattedDate].filter(Boolean).join(' · ');
 			</div>
 
 			<div class="actions">
-				<a class="back-link" href={`/${project.category}/`}>← {category?.title} listesine dön</a>
+				<a class="back-link" href={`/${category?.slug}/`}>← {category?.title} listesine dön</a>
 				<a class="cta" href="/iletisim">İletişime Geç</a>
 			</div>
 		</div>

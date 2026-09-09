@@ -1,10 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProjectCard from '../../components/projects/ProjectCard.astro';
-import { mockProjects } from '../../lib/mockProjects.js';
-import { mockCategories } from '../../lib/mockCategories.js';
+import { getProjects } from '../../lib/queries';
 
-const categoryTitle = (slug) => mockCategories.find((category) => category.slug === slug)?.title ?? '';
+const projects = await getProjects();
 ---
 <BaseLayout title="Projelerimiz">
 	<section class="projects">
@@ -13,11 +12,7 @@ const categoryTitle = (slug) => mockCategories.find((category) => category.slug 
 			<h1>Projelerimiz</h1>
 			<p class="lead">Tüm iş kollarımızda tamamladığımız projelerin genel listesi.</p>
 			<div class="grid">
-				{
-					mockProjects.map((project) => (
-						<ProjectCard project={project} categoryTitle={categoryTitle(project.category)} />
-					))
-				}
+				{projects.map((project) => <ProjectCard project={project} />)}
 			</div>
 		</div>
 	</section>

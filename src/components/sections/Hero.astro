@@ -1,11 +1,14 @@
+---
+import { getHomePage } from '../../lib/queries';
+
+const homePage = await getHomePage();
+---
+
 <section class="hero">
 	<div class="inner">
-		<p class="eyebrow">Mekanik ve Tarım Çözümleri</p>
-		<h1>Sahada güvenilir, projede kalıcı çözümler üretiyoruz.</h1>
-		<p class="lead">
-			Mekanik tesisat ve tarımsal altyapı projelerini anahtar teslim planlıyor, uyguluyor ve teslim
-			sonrasında da destekliyoruz.
-		</p>
+		<p class="eyebrow">{homePage?.heroEyebrow ?? ''}</p>
+		<h1>{homePage?.heroTitle ?? ''}</h1>
+		<p class="lead">{homePage?.heroDescription ?? ''}</p>
 		<a class="cta" href="/iletisim">İletişime Geçin</a>
 	</div>
 </section>

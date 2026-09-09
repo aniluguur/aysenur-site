@@ -1,18 +1,18 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProjectCard from '../../components/projects/ProjectCard.astro';
-import { mockCategories } from '../../lib/mockCategories.js';
-import { mockProjects } from '../../lib/mockProjects.js';
+import { getCategories, getProjectsByCategory } from '../../lib/queries';
 
-export function getStaticPaths() {
-	return mockCategories.map((category) => ({
+export async function getStaticPaths() {
+	const categories = await getCategories();
+	return categories.map((category) => ({
 		params: { isKoluSlug: category.slug },
 		props: { category },
 	}));
 }
 
 const { category } = Astro.props;
-const categoryProjects = mockProjects.filter((project) => project.category === category.slug);
+const categoryProjects = await getProjectsByCategory(category.slug);
 ---
 
 <BaseLayout title={category.title}>
@@ -30,7 +30,7 @@ const categoryProjects = mockProjects.filter((project) => project.category === c
 				categoryProjects.length > 0 ? (
 					<div class="grid">
 						{categoryProjects.map((project) => (
-							<ProjectCard project={project} categoryTitle={category.title} />
+							<ProjectCard project={project} />
 						))}
 					</div>
 				) : (

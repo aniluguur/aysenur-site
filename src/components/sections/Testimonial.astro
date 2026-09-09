@@ -1,11 +1,17 @@
+---
+import { getHomePage } from '../../lib/queries';
+
+const homePage = await getHomePage();
+const quote = homePage?.testimonialQuote ?? '';
+const authorName = homePage?.testimonialAuthorName ?? '';
+const authorCompany = homePage?.testimonialAuthorCompany ?? '';
+---
+
 <section class="testimonial">
 	<div class="inner">
 		<blockquote class="card">
-			<p class="quote">
-				"Bu alana müşteri referansı eklenecek. Örnek: 'Projeyi zamanında ve beklediğimiz kalitede
-				teslim ettiler.'"
-			</p>
-			<footer class="attribution">[Müşteri Adı], [Şirket Adı]</footer>
+			<p class="quote">"{quote}"</p>
+			<footer class="attribution">{authorName}, {authorCompany}</footer>
 		</blockquote>
 	</div>
 </section>

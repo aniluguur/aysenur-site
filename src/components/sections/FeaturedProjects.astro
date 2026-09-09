@@ -1,10 +1,9 @@
 ---
-import { mockProjects } from '../../lib/mockProjects.js';
-import { mockCategories } from '../../lib/mockCategories.js';
+import { getProjects } from '../../lib/queries';
 import ProjectCard from '../projects/ProjectCard.astro';
 
-const categoryTitle = (slug) => mockCategories.find((category) => category.slug === slug)?.title ?? '';
-const projects = mockProjects.slice(0, 4);
+const allProjects = await getProjects();
+const projects = allProjects.slice(0, 4);
 ---
 
 <section class="featured-projects">
@@ -18,7 +17,7 @@ const projects = mockProjects.slice(0, 4);
 			{
 				projects.map((project) => (
 					<div class="carousel-item">
-						<ProjectCard project={project} categoryTitle={categoryTitle(project.category)} />
+						<ProjectCard project={project} />
 					</div>
 				))
 			}

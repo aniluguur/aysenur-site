@@ -1,15 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getContactPage } from '../lib/queries';
+
+const contactPage = await getContactPage();
 ---
 
 <BaseLayout title="İletişim">
 	<section class="hero">
 		<div class="inner">
-			<p class="eyebrow">İletişim</p>
-			<h1>Bize Ulaşın</h1>
-			<p class="lead">
-				Projeniz hakkında konuşmak, teklif almak ya da sorularınızı iletmek için bize ulaşabilirsiniz.
-			</p>
+			<p class="eyebrow">{contactPage?.heroEyebrow ?? ''}</p>
+			<h1>{contactPage?.heroTitle ?? ''}</h1>
+			<p class="lead">{contactPage?.heroDescription ?? ''}</p>
 		</div>
 	</section>
 
@@ -20,17 +21,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 				<div class="info-block">
 					<h3>Adres</h3>
-					<p>[Adres bilgisi eklenecek]</p>
+					<p>{contactPage?.address ?? ''}</p>
 				</div>
 
 				<div class="info-block">
 					<h3>Telefon</h3>
-					<p>[Telefon numarası eklenecek]</p>
+					<p>{contactPage?.phone ?? ''}</p>
 				</div>
 
 				<div class="info-block">
 					<h3>E-posta</h3>
-					<p>[E-posta adresi eklenecek]</p>
+					<p>{contactPage?.email ?? ''}</p>
 				</div>
 			</div>
 
