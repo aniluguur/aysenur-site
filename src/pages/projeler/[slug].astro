@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { mockProjects } from '../../lib/mockProjects.js';
+import { mockCategories } from '../../lib/mockCategories.js';
 
 export function getStaticPaths() {
 	return mockProjects.map((p) => ({
@@ -10,8 +11,235 @@ export function getStaticPaths() {
 }
 
 const { project } = Astro.props;
+const category = mockCategories.find((c) => c.slug === project.category);
+
+const TURKISH_MONTHS = [
+	'Ocak',
+	'Şubat',
+	'Mart',
+	'Nisan',
+	'Mayıs',
+	'Haziran',
+	'Temmuz',
+	'Ağustos',
+	'Eylül',
+	'Ekim',
+	'Kasım',
+	'Aralık',
+];
+
+const [year, month] = project.projectDate.split('-');
+const formattedDate = `${TURKISH_MONTHS[Number(month) - 1]} ${year}`;
+const meta = [project.location, formattedDate].filter(Boolean).join(' · ');
 ---
+
 <BaseLayout title={project.title}>
-	<h1>{project.title}</h1>
-	<p><a href={`/${project.category}/`}>← Projeler listesine dön</a></p>
+	<div class="cover" aria-hidden="true"></div>
+
+	<section class="header">
+		<div class="inner">
+			<p class="category">{category?.title}</p>
+			<h1>{project.title}</h1>
+			<p class="meta">{meta}</p>
+		</div>
+	</section>
+
+	<section class="content">
+		<div class="inner">
+			<p class="lead">{project.shortDescription}</p>
+			<p class="body">{project.description}</p>
+
+			<h2>Teknik Bilgiler</h2>
+			<dl class="tech-list">
+				{
+					project.technicalInfo.map((info) => (
+						<div class="tech-row">
+							<dt>{info.label}</dt>
+							<dd>{info.value}</dd>
+						</div>
+					))
+				}
+			</dl>
+
+			<h2>Proje Görselleri</h2>
+			<div class="gallery">
+				<div class="gallery-item item-1" aria-hidden="true"></div>
+				<div class="gallery-item item-2" aria-hidden="true"></div>
+				<div class="gallery-item item-3" aria-hidden="true"></div>
+				<div class="gallery-item item-4" aria-hidden="true"></div>
+			</div>
+
+			<div class="actions">
+				<a class="back-link" href={`/${project.category}/`}>← {category?.title} listesine dön</a>
+				<a class="cta" href="/iletisim">İletişime Geç</a>
+			</div>
+		</div>
+	</section>
 </BaseLayout>
+
+<style>
+	.cover {
+		aspect-ratio: 21 / 9;
+		background: linear-gradient(135deg, var(--color-field), var(--color-steel));
+	}
+
+	.header {
+		background: var(--color-ink);
+		color: var(--color-on-dark);
+	}
+
+	.header .inner {
+		max-width: var(--container);
+		margin-inline: auto;
+		padding: var(--space-6) var(--container-pad);
+	}
+
+	.category {
+		margin: 0 0 var(--space-2);
+		font-size: var(--text-sm);
+		font-weight: var(--weight-bold);
+		letter-spacing: var(--tracking-wide);
+		text-transform: uppercase;
+		color: var(--color-harvest);
+	}
+
+	.header h1 {
+		max-width: 24ch;
+		color: var(--color-on-dark);
+	}
+
+	.meta {
+		margin: 0;
+		font-size: var(--text-sm);
+		color: var(--color-steel-light);
+	}
+
+	.content .inner {
+		max-width: var(--container);
+		margin-inline: auto;
+		padding: var(--space-7) var(--container-pad);
+	}
+
+	.lead {
+		max-width: 60ch;
+		font-size: var(--text-lg);
+		color: var(--color-graphite);
+	}
+
+	.body {
+		max-width: 60ch;
+		color: var(--color-steel);
+	}
+
+	.content h2 {
+		margin-top: var(--space-7);
+	}
+
+	.tech-list {
+		display: grid;
+		gap: var(--space-3);
+		margin: 0;
+		max-width: 60ch;
+	}
+
+	.tech-row {
+		display: flex;
+		justify-content: space-between;
+		gap: var(--space-4);
+		padding: var(--space-3) 0;
+		border-bottom: var(--border-hairline);
+	}
+
+	.tech-row dt {
+		font-weight: var(--weight-medium);
+		color: var(--color-ink);
+	}
+
+	.tech-row dd {
+		margin: 0;
+		color: var(--color-steel);
+		text-align: right;
+	}
+
+	.gallery {
+		display: grid;
+		gap: var(--space-4);
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.gallery-item {
+		aspect-ratio: 4 / 3;
+		border-radius: var(--radius-md);
+	}
+
+	.item-1 {
+		background: linear-gradient(135deg, var(--color-field), var(--color-steel));
+	}
+
+	.item-2 {
+		background: linear-gradient(315deg, var(--color-harvest), var(--color-accent));
+	}
+
+	.item-3 {
+		background: linear-gradient(45deg, var(--color-accent-strong), var(--color-field));
+	}
+
+	.item-4 {
+		background: linear-gradient(225deg, var(--color-steel), var(--color-accent-strong));
+	}
+
+	.actions {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--space-4);
+		margin-top: var(--space-7);
+		padding-top: var(--space-5);
+		border-top: var(--border-hairline);
+	}
+
+	.back-link {
+		font-size: var(--text-sm);
+		font-weight: var(--weight-medium);
+		color: var(--color-accent-strong);
+		text-decoration: none;
+	}
+
+	.back-link:hover {
+		text-decoration: underline;
+	}
+
+	.cta {
+		display: inline-block;
+		padding: var(--space-3) var(--space-6);
+		background: var(--color-accent);
+		color: var(--color-on-accent);
+		font-weight: var(--weight-medium);
+		font-size: var(--text-sm);
+		letter-spacing: var(--tracking-wide);
+		text-transform: uppercase;
+		text-decoration: none;
+		border-radius: var(--radius-sm);
+		transition: background var(--transition);
+	}
+
+	.cta:hover {
+		background: var(--color-accent-strong);
+	}
+
+	@media (min-width: 900px) {
+		.header .inner {
+			padding-block: var(--space-7);
+		}
+
+		.gallery {
+			grid-template-columns: repeat(4, 1fr);
+		}
+
+		.actions {
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+		}
+	}
+</style>

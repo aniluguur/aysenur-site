@@ -1,6 +1,185 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
+
 <BaseLayout title="İletişim">
-	<h1>İletişim</h1>
+	<section class="hero">
+		<div class="inner">
+			<p class="eyebrow">İletişim</p>
+			<h1>Bize Ulaşın</h1>
+			<p class="lead">
+				Projeniz hakkında konuşmak, teklif almak ya da sorularınızı iletmek için bize ulaşabilirsiniz.
+			</p>
+		</div>
+	</section>
+
+	<section class="contact">
+		<div class="inner">
+			<div class="info">
+				<h2>İletişim Bilgileri</h2>
+
+				<div class="info-block">
+					<h3>Adres</h3>
+					<p>[Adres bilgisi eklenecek]</p>
+				</div>
+
+				<div class="info-block">
+					<h3>Telefon</h3>
+					<p>[Telefon numarası eklenecek]</p>
+				</div>
+
+				<div class="info-block">
+					<h3>E-posta</h3>
+					<p>[E-posta adresi eklenecek]</p>
+				</div>
+			</div>
+
+			<!-- Backend henüz karara bağlanmadı: ileride Cloudflare Pages Function + e-posta servisi (Resend vb.) ile bağlanacak -->
+			<form class="form">
+				<h2>Mesaj Gönderin</h2>
+
+				<label for="name">Ad Soyad</label>
+				<input type="text" id="name" name="name" required />
+
+				<label for="email">E-posta</label>
+				<input type="email" id="email" name="email" required />
+
+				<label for="phone">Telefon <span class="optional">(opsiyonel)</span></label>
+				<input type="tel" id="phone" name="phone" />
+
+				<label for="message">Mesaj</label>
+				<textarea id="message" name="message" rows="5" required></textarea>
+
+				<button type="submit">Gönder</button>
+			</form>
+		</div>
+	</section>
 </BaseLayout>
+
+<style>
+	.hero {
+		background: var(--color-ink);
+		color: var(--color-on-dark);
+	}
+
+	.hero .inner {
+		max-width: var(--container);
+		margin-inline: auto;
+		padding: var(--space-8) var(--container-pad);
+	}
+
+	.eyebrow {
+		margin: 0 0 var(--space-3);
+		font-size: var(--text-sm);
+		font-weight: var(--weight-bold);
+		letter-spacing: var(--tracking-wide);
+		text-transform: uppercase;
+		color: var(--color-harvest);
+	}
+
+	.hero h1 {
+		color: var(--color-on-dark);
+	}
+
+	.hero .lead {
+		max-width: 48ch;
+		font-size: var(--text-lg);
+		color: var(--color-steel-light);
+	}
+
+	@media (min-width: 900px) {
+		.hero .inner {
+			padding-block: var(--space-9);
+		}
+	}
+
+	.contact .inner {
+		max-width: var(--container);
+		margin-inline: auto;
+		padding: var(--space-7) var(--container-pad);
+		display: grid;
+		gap: var(--space-7);
+	}
+
+	.info-block {
+		margin-bottom: var(--space-5);
+	}
+
+	.info-block h3 {
+		margin: 0 0 var(--space-1);
+		font-size: var(--text-base);
+		color: var(--color-ink);
+	}
+
+	.info-block p {
+		margin: 0;
+		color: var(--color-steel);
+	}
+
+	.form {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.form label {
+		margin-bottom: var(--space-2);
+		font-size: var(--text-sm);
+		font-weight: var(--weight-medium);
+		color: var(--color-ink);
+	}
+
+	.optional {
+		font-weight: var(--weight-regular);
+		color: var(--color-steel);
+	}
+
+	.form input,
+	.form textarea {
+		width: 100%;
+		margin-bottom: var(--space-4);
+		padding: var(--space-3);
+		font-family: var(--font-sans);
+		font-size: var(--text-base);
+		color: var(--color-ink);
+		background: var(--color-surface);
+		border: var(--border-hairline);
+		border-radius: var(--radius-sm);
+	}
+
+	.form textarea {
+		resize: vertical;
+	}
+
+	.form input:focus,
+	.form textarea:focus {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 1px;
+		border-color: var(--color-accent);
+	}
+
+	.form button {
+		align-self: flex-start;
+		padding: var(--space-3) var(--space-6);
+		background: var(--color-accent);
+		color: var(--color-on-accent);
+		font-weight: var(--weight-medium);
+		font-size: var(--text-sm);
+		letter-spacing: var(--tracking-wide);
+		text-transform: uppercase;
+		border: none;
+		border-radius: var(--radius-sm);
+		cursor: pointer;
+		transition: background var(--transition);
+	}
+
+	.form button:hover {
+		background: var(--color-accent-strong);
+	}
+
+	@media (min-width: 900px) {
+		.contact .inner {
+			grid-template-columns: 1fr 1.4fr;
+			align-items: start;
+		}
+	}
+</style>

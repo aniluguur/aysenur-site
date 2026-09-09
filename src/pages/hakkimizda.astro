@@ -1,6 +1,204 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const values = [
+	{
+		title: 'Şeffaflık',
+		description: 'Kapsam, süre ve maliyeti proje başında netleştirir, süreç boyunca açık iletişim kurarız.',
+	},
+	{
+		title: 'Yerel Bilgi',
+		description: 'Sahada çalıştığımız bölgelerin koşullarını tanır, çözümlerimizi buna göre şekillendiririz.',
+	},
+	{
+		title: 'Sürdürülebilirlik',
+		description: 'Kaynakları verimli kullanan, uzun ömürlü sistemler kurmayı önceliklendiririz.',
+	},
+	{
+		title: 'Esnek Ekip',
+		description: 'Mekanik ve tarım alanındaki farklı ölçekteki işlere aynı titizlikle yaklaşırız.',
+	},
+];
 ---
+
 <BaseLayout title="Hakkımızda">
-	<h1>Hakkımızda</h1>
+	<section class="hero">
+		<div class="inner">
+			<p class="eyebrow">Biz Kimiz</p>
+			<h1>Sahada bulunmayı, işi bilmenin ilk şartı sayıyoruz.</h1>
+			<p class="lead">
+				Mekanik tesisat ve tarımsal altyapı işlerinde, planlamadan teslim sonrasına kadar müşterimizin
+				yanında yer alan bir ekibiz.
+			</p>
+		</div>
+	</section>
+
+	<section class="story">
+		<div class="inner">
+			<p>
+				Yıllardır mekanik ve tarım sektöründe farklı ölçeklerde projeler yürütüyoruz. Bu süreçte
+				öğrendiğimiz en önemli şey, her sahanın kendine has koşulları olduğu ve genel geçer
+				çözümlerin yerinde çalışmadığı. Bu yüzden her işe, o projenin gerçek ihtiyaçlarını anlayarak
+				başlıyoruz.
+			</p>
+			<p>
+				Deneyimli ekibimiz, imalat ve montajdan sulama sistemlerine, ekipman bakımından devreye
+				almaya kadar geniş bir yelpazede çalışıyor. Bu çeşitlilik bize, bir sektörde edindiğimiz
+				disiplini diğerine taşıma imkanı veriyor.
+			</p>
+			<p>
+				Müşterilerimizle kurduğumuz ilişkiyi tek seferlik bir iş olarak değil, uzun vadeli bir
+				ortaklık olarak görüyoruz. Teslimden sonra da ulaşılabilir olmaya, ihtiyaç duyulduğunda
+				destek vermeye önem veriyoruz.
+			</p>
+		</div>
+	</section>
+
+	<section class="values">
+		<div class="inner">
+			<h2>Değerlerimiz</h2>
+
+			<ul class="grid">
+				{
+					values.map((value) => (
+						<li class="card">
+							<h3>{value.title}</h3>
+							<p>{value.description}</p>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+	</section>
+
+	<section class="closing">
+		<div class="inner">
+			<h2>Projenizi konuşalım</h2>
+			<a class="cta" href="/iletisim">İletişime Geçin</a>
+		</div>
+	</section>
 </BaseLayout>
+
+<style>
+	.hero {
+		background: var(--color-ink);
+		color: var(--color-on-dark);
+	}
+
+	.hero .inner {
+		max-width: var(--container);
+		margin-inline: auto;
+		padding: var(--space-8) var(--container-pad);
+	}
+
+	.eyebrow {
+		margin: 0 0 var(--space-3);
+		font-size: var(--text-sm);
+		font-weight: var(--weight-bold);
+		letter-spacing: var(--tracking-wide);
+		text-transform: uppercase;
+		color: var(--color-harvest);
+	}
+
+	.hero h1 {
+		max-width: 20ch;
+		color: var(--color-on-dark);
+	}
+
+	.hero .lead {
+		max-width: 48ch;
+		font-size: var(--text-lg);
+		color: var(--color-steel-light);
+	}
+
+	@media (min-width: 900px) {
+		.hero .inner {
+			padding-block: var(--space-9);
+		}
+	}
+
+	.story .inner {
+		max-width: var(--container);
+		margin-inline: auto;
+		padding: var(--space-7) var(--container-pad);
+	}
+
+	.story p {
+		max-width: 68ch;
+		color: var(--color-steel);
+	}
+
+	.values {
+		background: var(--color-surface-alt);
+	}
+
+	.values .inner {
+		max-width: var(--container);
+		margin-inline: auto;
+		padding: var(--space-7) var(--container-pad);
+	}
+
+	.grid {
+		display: grid;
+		gap: var(--space-5);
+		margin: var(--space-6) 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.card {
+		padding: var(--space-5);
+		background: var(--color-surface);
+		border-radius: var(--radius-md);
+	}
+
+	.card h3 {
+		margin: 0 0 var(--space-2);
+		font-size: var(--text-lg);
+		color: var(--color-ink);
+	}
+
+	.card p {
+		margin: 0;
+		font-size: var(--text-sm);
+		color: var(--color-steel);
+	}
+
+	@media (min-width: 900px) {
+		.grid {
+			grid-template-columns: repeat(4, 1fr);
+		}
+	}
+
+	.closing {
+		text-align: center;
+	}
+
+	.closing .inner {
+		max-width: var(--container);
+		margin-inline: auto;
+		padding: var(--space-8) var(--container-pad);
+	}
+
+	.closing h2 {
+		margin-bottom: var(--space-5);
+	}
+
+	.cta {
+		display: inline-block;
+		padding: var(--space-3) var(--space-6);
+		background: var(--color-accent);
+		color: var(--color-on-accent);
+		font-weight: var(--weight-medium);
+		font-size: var(--text-sm);
+		letter-spacing: var(--tracking-wide);
+		text-transform: uppercase;
+		text-decoration: none;
+		border-radius: var(--radius-sm);
+		transition: background var(--transition);
+	}
+
+	.cta:hover {
+		background: var(--color-accent-strong);
+	}
+</style>

@@ -1,0 +1,97 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/projects/ProjectCard.astro';
+import { mockCategories } from '../../lib/mockCategories.js';
+import { mockProjects } from '../../lib/mockProjects.js';
+
+export function getStaticPaths() {
+	return mockCategories.map((category) => ({
+		params: { isKoluSlug: category.slug },
+		props: { category },
+	}));
+}
+
+const { category } = Astro.props;
+const categoryProjects = mockProjects.filter((project) => project.category === category.slug);
+---
+
+<BaseLayout title={category.title}>
+	<section class="hero">
+		<div class="inner">
+			<p class="eyebrow">Hizmet Verdiğimiz Sektörler</p>
+			<h1>{category.title}</h1>
+			<p class="lead">{category.description}</p>
+		</div>
+	</section>
+
+	<section class="projects">
+		<div class="inner">
+			{
+				categoryProjects.length > 0 ? (
+					<div class="grid">
+						{categoryProjects.map((project) => (
+							<ProjectCard project={project} categoryTitle={category.title} />
+						))}
+					</div>
+				) : (
+					<p class="empty">Yakında projelerimizi burada paylaşacağız.</p>
+				)
+			}
+		</div>
+	</section>
+</BaseLayout>
+
+<style>
+	.hero {
+		background: var(--color-ink);
+		color: var(--color-on-dark);
+	}
+
+	.hero .inner {
+		max-width: var(--container);
+		margin-inline: auto;
+		padding: var(--space-8) var(--container-pad);
+	}
+
+	.eyebrow {
+		margin: 0 0 var(--space-3);
+		font-size: var(--text-sm);
+		font-weight: var(--weight-bold);
+		letter-spacing: var(--tracking-wide);
+		text-transform: uppercase;
+		color: var(--color-harvest);
+	}
+
+	.hero h1 {
+		max-width: 18ch;
+		color: var(--color-on-dark);
+	}
+
+	.hero .lead {
+		max-width: 48ch;
+		font-size: var(--text-lg);
+		color: var(--color-steel-light);
+	}
+
+	@media (min-width: 900px) {
+		.hero .inner {
+			padding-block: var(--space-9);
+		}
+	}
+
+	.projects .inner {
+		max-width: var(--container);
+		margin-inline: auto;
+		padding: var(--space-7) var(--container-pad);
+	}
+
+	.grid {
+		display: grid;
+		gap: var(--space-5);
+		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	}
+
+	.empty {
+		color: var(--color-steel);
+	}
+</style>
